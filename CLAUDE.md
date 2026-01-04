@@ -6,7 +6,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Void Survival** is a space shooter game built with **Godot 4.5** where players control a spaceship, destroy asteroids, and survive as long as possible. This is a Week 1 prototype implementing core gameplay mechanics.
+**Void Survival** is a space shooter game built with **Godot 4.5** where players control a spaceship, destroy asteroids, and survive as long as possible.
+
+**Current Status**: Week 1 Prototype ✅ Complete
+**Next Phase**: Phase 1 Foundation (Modules 1-5) - Resource system, save/load, credit economy, upgrade shop
+**Target Platforms**: Mobile (iOS/Android), PC
+
+### Documentation Structure
+
+All design and planning documentation is in `Documents/`:
+- **[GDD](Documents/VoidSurvivor_GDD.md)**: Complete game design specification
+- **[Technical Spec](Documents/VoidSurvivor_TechnicalSpec_Godot.md)**: Godot 4 implementation architecture
+- **[Development Plan](Documents/Development_Plan_Overview.md)**: High-level strategy and phases
+- **[Modules](Documents/modules/)**: 12 independent feature modules organized by priority
+  - Phase 1 (High Priority): Modules 1-5 (Resource system, save/load, credits, shop, stats)
+  - Phase 2 (Medium Priority): Modules 6-8 (Enemy variety, black holes, difficulty)
+  - Phase 3 (Low-Medium Priority): Modules 9-12 (Weapons, VFX, menu, hyperspace)
+- **[Archive](Documents/archive/)**: Completed plans including the prototype plan
+
+### Key Architecture Principles
+
+- **Data-Driven**: All gameplay parameters in Resource files (no hardcoded stats)
+- **Signal-Based**: Decoupled systems using Godot's signal system
+- **Modular**: Reusable components and scenes
+- **Infinite Progression**: Mathematical formulas for endless scaling
+- **Extensible**: Add items/enemies via resources, no code changes needed
 
 ### Running the Game
 
