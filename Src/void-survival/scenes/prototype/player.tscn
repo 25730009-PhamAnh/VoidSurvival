@@ -20,4 +20,3 @@ polygon = PackedVector2Array(0, -20, -15, 15, 15, 15)
 position = Vector2(0, -25)
 
 [node name="CollectionComponent" parent="." instance=ExtResource("3_collection")]
-collection_radius = 15.0

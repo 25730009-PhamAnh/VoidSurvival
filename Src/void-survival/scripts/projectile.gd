@@ -19,6 +19,7 @@ func _on_body_entered(body: Node2D) -> void:
 		var asteroid = body as Asteroid
 		if asteroid:
 			asteroid.take_damage(DAMAGE)
+			SessionManager.record_shot_hit()
 			queue_free()
 
 func _on_screen_exited() -> void:

@@ -1,8 +1,8 @@
 # Void Survivor - Development Plan Overview
 
-**Version**: 1.0
+**Version**: 1.1
 **Last Updated**: January 4, 2026
-**Status**: Phase 1 Planning
+**Status**: Phase 1 In Progress (3/5 modules complete)
 
 ---
 
@@ -28,6 +28,24 @@ This document outlines a modular, feature-by-feature development plan for **Void
 - Game over and restart functionality
 - Signal-based event system established
 
+✅ **Module 1: Resource System Complete** (archived):
+- Crystal pickups spawn from destroyed asteroids
+- CollectionComponent for player item attraction
+- ResourceManager singleton tracks crystals and credits
+- Crystals auto-convert to credits on game over
+
+✅ **Module 2: Save/Load System Complete** (archived):
+- SaveSystem singleton with JSON persistence
+- Credits, stats, and settings persist across sessions
+- Save validation and corruption handling
+- Auto-save on game over and credit transactions
+
+✅ **Module 3: Credit Economy Complete** (archived):
+- SessionManager tracks detailed session stats (accuracy, survival time, etc.)
+- Credit calculation with bonuses (time, combat, accuracy)
+- Professional game over screen with stats breakdown
+- Navigation to upgrades and main menu (placeholders ready)
+
 ---
 
 ## Feature Modules
@@ -36,35 +54,36 @@ The remaining development is organized into **12 independent feature modules**, 
 
 ### Module Overview
 
-| # | Module | Priority | Duration | Dependencies |
-|---|--------|----------|----------|--------------|
-| 1 | Resource System & Item Pickups | High | 3-5 days | None |
-| 2 | Save/Load System | High | 2-4 days | None |
-| 3 | Credit Economy & Post-Game Flow | High | 2-3 days | Modules 1, 2 |
-| 4 | Upgrade Shop UI | High | 4-6 days | Module 3 |
-| 5 | Stat Calculation & Upgrade System | High | 3-5 days | Module 4 |
-| 6 | Enemy Variety & Spawning | Medium | 5-7 days | None |
-| 7 | Black Hole Hazard System | Medium | 3-4 days | None |
-| 8 | Dynamic Difficulty System | Medium | 4-5 days | Modules 6, 5 |
-| 9 | Weapon Variety System | Low-Medium | 5-7 days | Module 5 |
-| 10 | Visual Effects & Juice | Low | 4-6 days | All gameplay |
-| 11 | Main Menu & Game Flow | Medium | 3-4 days | Modules 2, 4 |
-| 12 | Hyperspace Jump Mechanic | Low | 2-3 days | None |
+| # | Module | Priority | Duration | Status | Dependencies |
+|---|--------|----------|----------|--------|--------------|
+| 1 | Resource System & Item Pickups | High | 3-5 days | ✅ Complete | None |
+| 2 | Save/Load System | High | 2-4 days | ✅ Complete | None |
+| 3 | Credit Economy & Post-Game Flow | High | 2-3 days | ✅ Complete | Modules 1, 2 |
+| 4 | Upgrade Shop UI | High | 4-6 days | 🔄 Next | Module 3 |
+| 5 | Stat Calculation & Upgrade System | High | 3-5 days | ⏳ Pending | Module 4 |
+| 6 | Enemy Variety & Spawning | Medium | 5-7 days | ⏳ Pending | None |
+| 7 | Black Hole Hazard System | Medium | 3-4 days | ⏳ Pending | None |
+| 8 | Dynamic Difficulty System | Medium | 4-5 days | ⏳ Pending | Modules 6, 5 |
+| 9 | Weapon Variety System | Low-Medium | 5-7 days | ⏳ Pending | Module 5 |
+| 10 | Visual Effects & Juice | Low | 4-6 days | ⏳ Pending | All gameplay |
+| 11 | Main Menu & Game Flow | Medium | 3-4 days | ⏳ Pending | Modules 2, 4 |
+| 12 | Hyperspace Jump Mechanic | Low | 2-3 days | ⏳ Pending | None |
 
 ---
 
 ## Implementation Order
 
-### Phase 1: Foundation (Weeks 2-3)
+### Phase 1: Foundation (Weeks 2-3) - 60% Complete
 Focus on core systems that other features depend on:
 
-1. **Module 1**: Resource System & Pickups
-2. **Module 2**: Save/Load System
-3. **Module 3**: Credit Economy
-4. **Module 4**: Upgrade Shop UI
-5. **Module 5**: Stat Calculation & Upgrades
+1. ✅ **Module 1**: Resource System & Pickups (Complete)
+2. ✅ **Module 2**: Save/Load System (Complete)
+3. ✅ **Module 3**: Credit Economy (Complete)
+4. 🔄 **Module 4**: Upgrade Shop UI (Next)
+5. ⏳ **Module 5**: Stat Calculation & Upgrades
 
 **Milestone**: Can earn credits, buy upgrades, see stats change in-game.
+**Current Progress**: Players can collect crystals, earn credits with bonuses, and credits persist across sessions.
 
 ---
 
@@ -253,7 +272,16 @@ This development plan breaks **Void Survivor** into **12 independent, extensible
 
 The architecture prioritizes **modularity** and **extensibility**, allowing new content (items, enemies, weapons) to be added via resources without code changes. Signal-based communication ensures features remain independent while working together seamlessly.
 
-**Next Steps**: Begin Phase 1 implementation starting with Module 1 (Resource System).
+**Next Steps**: Continue Phase 1 implementation with Module 4 (Upgrade Shop UI). Modules 1-3 complete and archived.
+
+---
+
+## Archived Plans
+
+Completed implementation plans can be found in [archive/](archive/):
+- ✅ [VoidSurvivor_PrototypePlan.md](archive/VoidSurvivor_PrototypePlan.md) - Week 1 Prototype
+- ✅ [module_01_02_plan.md](archive/module_01_02_plan.md) - Modules 1 & 2 (Resource System + Save/Load)
+- ✅ [module_03_plan.md](archive/module_03_plan.md) - Module 3 (Credit Economy)
 
 ---
 

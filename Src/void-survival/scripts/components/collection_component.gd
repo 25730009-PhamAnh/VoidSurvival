@@ -6,13 +6,13 @@ class_name CollectionComponent
 
 signal item_collected(item: Node2D, value: int)
 
-@export var collection_radius: float = 50.0:
+@export var collection_radius: float = 15.0:
 	set(value):
 		collection_radius = value
 		_update_collection_shape()
 
-@export var attraction_strength: float = 100.0
-@export var attraction_radius: float = 150.0:
+@export var attraction_strength: float = 400.0
+@export var attraction_radius: float = 200.0:
 	set(value):
 		attraction_radius = value
 		_update_attraction_shape()

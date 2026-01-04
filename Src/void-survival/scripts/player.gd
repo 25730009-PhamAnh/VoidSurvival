@@ -77,6 +77,7 @@ func _fire() -> void:
 		return
 
 	_fire_timer = FIRE_RATE
+	SessionManager.record_shot_fired()
 
 	var projectile = projectile_scene.instantiate()
 	projectile.global_position = shoot_point.global_position
@@ -101,6 +102,7 @@ func _wrap_around_screen() -> void:
 
 func take_damage(amount: float) -> void:
 	current_shield -= amount
+	SessionManager.record_damage_taken(amount)
 	shield_changed.emit(current_shield, max_shield)
 
 	if current_shield <= 0:
@@ -115,3 +117,4 @@ func _on_item_collected(item: Node2D, value: int) -> void:
 	if item.has_signal("collected"):
 		item.collected.emit(value)
 	ResourceManager.add_crystals(value)
+	SessionManager.record_crystal_collected(value)

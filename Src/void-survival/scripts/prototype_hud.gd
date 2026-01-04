@@ -3,15 +3,11 @@ extends CanvasLayer
 @onready var shield_bar: ProgressBar = %ShieldBar
 @onready var score_label: Label = %ScoreLabel
 @onready var crystal_label: Label = %CrystalLabel
-@onready var game_over_panel: CenterContainer = %GameOverPanel
 
 func _ready() -> void:
-	game_over_panel.hide()
-
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
 		player.shield_changed.connect(_on_shield_changed)
-		player.died.connect(_on_player_died)
 	else:
 		push_warning("HUD: No player found in scene!")
 
@@ -30,10 +26,5 @@ func _on_shield_changed(current: float, maximum: float) -> void:
 func _on_score_updated(new_score: int) -> void:
 	score_label.text = "Score: %d" % new_score
 
-
 func _on_crystals_changed(current: int) -> void:
 	crystal_label.text = "Crystals: %d" % current
-
-
-func _on_player_died() -> void:
-	game_over_panel.show()
