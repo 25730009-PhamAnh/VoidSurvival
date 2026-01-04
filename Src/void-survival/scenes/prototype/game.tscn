@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://b68xjk88su1f0"]
+
+[ext_resource type="Script" uid="uid://bo6brq6t053vb" path="res://scripts/game_manager.gd" id="1_game_manager"]
+[ext_resource type="Script" uid="uid://b31w6uarw2ev4" path="res://scripts/spawner.gd" id="2_spawner"]
+[ext_resource type="PackedScene" uid="uid://cj4kw8h5p2m1x" path="res://scenes/prototype/asteroid.tscn" id="3_asteroid"]
+[ext_resource type="PackedScene" uid="uid://d1n5x7q8p4w2v" path="res://scenes/prototype/player.tscn" id="4_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/prototype_hud.tscn" id="5_hud"]
+
+[node name="Game" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -1
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0, 0, 0, 1)
+
+[node name="GameManager" type="Node" parent="." groups=["game_manager"]]
+script = ExtResource("1_game_manager")
+
+[node name="Spawner" type="Node" parent="."]
+script = ExtResource("2_spawner")
+asteroid_scene = ExtResource("3_asteroid")
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+position = Vector2(640, 360)
+
+[node name="HUD" parent="." instance=ExtResource("5_hud")]

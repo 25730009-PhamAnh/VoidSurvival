@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://cj4kw8h5p2m1x"]
+
+[ext_resource type="Script" uid="uid://0jpl56utlvgj" path="res://scripts/asteroid.gd" id="1_asteroid"]
+
+[node name="Asteroid" type="RigidBody2D"]
+collision_layer = 2
+gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_asteroid")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.5, 0.5, 0.5, 1)
+polygon = PackedVector2Array(0, -40, 25, -20, 35, 10, 20, 35, -10, 40, -30, 25, -35, 0, -25, -25)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(0, -40, 30, -10, 30, 20, 0, 40, -30, 20, -30, -10)
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+scale = Vector2(2, 2)

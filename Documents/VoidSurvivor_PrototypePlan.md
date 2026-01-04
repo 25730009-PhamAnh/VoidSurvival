@@ -1,596 +1,709 @@
-# Void Survivor - Prototype Development Plan
-**Version:** 1.0  
-**Date:** January 3, 2026  
-**Target Duration:** 4 Weeks  
-**Goal:** Create a playable vertical slice demonstrating core gameplay loop
+# Void Survivor - Minimal Prototype Plan (Godot 4)
+
+## Prototype Goal
+
+**Primary Objective**: Create a playable core loop to validate the game feel
+**Timeline**: 1-2 days
+**Scope**: Minimal viable gameplay - no progression, no polish, just mechanics
 
 ---
 
-## 1. Prototype Objectives
+## What We're Building
 
-### 1.1 Primary Goals
+A single playable scene where:
+- Player controls a ship with inertia-based movement
+- Ship shoots projectiles to destroy asteroids
+- Asteroids split into smaller pieces when hit
+- Player has a shield that depletes on collision
+- Game ends when shield reaches zero
+- Simple score tracking
 
-✅ **Prove Core Mechanics**
-- Validate inertia-based movement feels good
-- Confirm shooting and destruction is satisfying
-- Test basic difficulty scaling system
-- Verify progression loop is engaging
-
-✅ **Test Key Features**
-- Ship controls with screen wrap-around
-- Asteroid destruction and fragmentation
-- Basic shield system with regeneration
-- Simple upgrade system (1-2 upgrades)
-- Dynamic difficulty (basic version)
-
-✅ **Gather Feedback**
-- Is the game fun in the first 5 minutes?
-- Does progression feel rewarding?
-- Is difficulty curve appropriate?
-- Are controls intuitive?
-
-### 1.2 Out of Scope (For Later)
-
-❌ **Not in Prototype**
-- Full item system (only 2-3 test items)
-- All enemy types (only asteroids + 1 enemy)
-- Black holes
-- Complete UI/UX polish
-- Audio/music
-- Advanced VFX
-- Save system
-- Achievements
-- Daily challenges
-- Meta-progression/prestige
+**NOT in Prototype**:
+- ❌ Upgrade system
+- ❌ Enemy UFOs/Comets
+- ❌ Black holes
+- ❌ Persistent progression
+- ❌ Multiple game modes
+- ❌ Polished UI
+- ❌ Dynamic difficulty
+- ❌ VFX/particles
+- ❌ Sound/music
+- ❌ Shield regeneration (keep it simple)
 
 ---
 
-## 2. Prototype Features Breakdown
+## Core Mechanics to Implement
 
-### 2.1 Must Have (Week 1-2)
+### 1. Player Ship
+**Features**:
+- Inertia-based movement (thrust forward/backward)
+- Rotation (left/right)
+- Screen wrap-around
+- Basic collision detection
+- Shield with health bar
 
-**Core Gameplay**
-- ✅ Player ship with inertia physics
-- ✅ Rotation and thrust controls
-- ✅ Screen wrap-around
-- ✅ Basic shooting (line projectiles)
-- ✅ Asteroid spawning
-- ✅ Asteroid fragmentation (3 sizes)
-- ✅ Shield system (deplete on hit, regenerate)
-- ✅ Game over on shield depleted
-- ✅ Basic score system
+**Controls** (Input Map):
+- `W` / `thrust_forward` - Thrust forward
+- `A` / `rotate_left` - Rotate left
+- `D` / `rotate_right` - Rotate right
+- `Space` / `fire` - Shoot
+- `R` / `restart` - Restart game
 
-**Minimal Difficulty**
-- ✅ Time-based difficulty increase
-- ✅ Spawn rate increases over time
-- ✅ Asteroid speed increases over time
+### 2. Shooting System
+**Features**:
+- Fire projectiles in facing direction
+- Fixed fire rate (2 shots/second)
+- Projectiles destroy on hit or off-screen
+- Simple collision detection
 
-**Basic UI**
-- ✅ Shield bar
-- ✅ Score counter
-- ✅ Survival timer
-- ✅ Game over screen with restart
+### 3. Asteroids
+**Features**:
+- 3 sizes: Large → Medium → Small
+- Random initial velocity
+- Rotate slowly
+- Split into 2-3 smaller asteroids when destroyed
+- Small asteroids disappear when destroyed
+- Each size has different health (Large: 30, Medium: 15, Small: 5)
 
-### 2.2 Should Have (Week 3)
+### 4. Shield System
+**Features**:
+- Start with 100 shield
+- Lose shield on asteroid collision (damage: Large -40, Medium -20, Small -10)
+- NO regeneration in prototype (keep it simple)
+- Game over when shield = 0
 
-**Enhanced Gameplay**
-- ✅ 1 enemy type (UFO that shoots)
-- ✅ Void crystals (collectible resource)
-- ✅ 1 temporary pickup (Speed Boost)
-- ✅ Hyperspace jump (emergency teleport)
+### 5. Spawning
+**Features**:
+- Spawn 1 large asteroid every 3 seconds
+- Spawn at random screen edge
+- Random initial direction toward screen center (with variance)
+- Max 15 asteroids on screen at once
 
-**Progression (Simplified)**
-- ✅ Post-game credits earned
-- ✅ 2-3 permanent upgrades purchasable
-  - Energy Shield (increase max shield)
-  - Rapid Fire (increase fire rate)
-  - Piercing Rounds (shots go through asteroids)
-- ✅ Upgrade menu between runs
+### 6. Basic HUD
+**Features**:
+- Shield bar (top-left)
+- Score counter (top-right)
+- "Game Over" text on death
+- "Press R to Restart" message
 
-**Difficulty Evolution**
-- ✅ Basic dynamic difficulty
-  - Reduce spawn rate when shield < 30%
-  - Increase spawn rate when shield > 70%
-
-### 2.3 Nice to Have (Week 4)
-
-**Polish**
-- ✅ Simple particle effects (explosions)
-- ✅ Screen shake on impacts
-- ✅ Placeholder sound effects
-- ✅ Visual feedback for damage/collection
-- ✅ Minimap showing threats
-
-**Additional Content**
-- ✅ 1-2 more upgrades
-- ✅ 1 more temporary pickup
-- ✅ High score tracking (session-based)
-
----
-
-## 3. Development Schedule
-
-### Week 1: Foundation (Jan 3-9, 2026)
-
-#### Day 1-2: Project Setup
-- [ ] Create Unity 6.3 LTS project
-- [ ] Set up project folders structure
-- [ ] Create basic scene (black background, minimal setup)
-- [ ] Set up version control (Git)
-- [ ] Create initial GameObject structure
-
-**Deliverable:** Empty project with proper structure
-
-#### Day 3-4: Player Ship Movement
-- [ ] Create player ship (white triangle sprite)
-- [ ] Implement Rigidbody2D physics
-- [ ] Add rotation controls (touch/keyboard)
-- [ ] Add thrust controls
-- [ ] Implement screen wrap-around
-- [ ] Test and tune movement feel
-
-**Deliverable:** Playable ship with good feel
-
-#### Day 5-7: Basic Shooting & Asteroids
-- [ ] Create projectile system
-- [ ] Implement firing mechanic
-- [ ] Create asteroid prefab (gray polygon)
-- [ ] Implement asteroid spawning
-- [ ] Add asteroid fragmentation (split into 3 smaller)
-- [ ] Implement collision detection
-- [ ] Add score on asteroid destruction
-
-**Deliverable:** Ship can shoot and destroy asteroids
-
-**Week 1 Milestone:** Player can fly around, shoot, and destroy asteroids that fragment
+### 7. Score System
+**Simple scoring**:
+- Large asteroid destroyed: +100
+- Medium asteroid destroyed: +50
+- Small asteroid destroyed: +25
 
 ---
 
-### Week 2: Core Loop (Jan 10-16, 2026)
+## Implementation Checklist
 
-#### Day 8-9: Shield System
-- [ ] Implement shield component
-- [ ] Add shield UI bar
-- [ ] Shield depletes on collision
-- [ ] Shield regenerates after delay
-- [ ] Game over when shield = 0
-- [ ] Game over screen with restart button
+### Phase 1: Project Setup (30 min)
+- [ ] Create Godot 4 project named "Void Survival"
+- [ ] Set up project structure:
+  ```
+  Src/
+  ├── scenes/
+  │   ├── prototype/
+  │   │   ├── game.tscn          # Main game scene
+  │   │   ├── player.tscn        # Player ship
+  │   │   ├── projectile.tscn    # Bullet
+  │   │   └── asteroid.tscn      # Asteroid (3 sizes)
+  │   └── ui/
+  │       └── prototype_hud.tscn # Simple HUD
+  └── scripts/
+      └── prototype/
+          ├── player.gd
+          ├── projectile.gd
+          ├── asteroid.gd
+          ├── spawner.gd
+          ├── game_manager.gd
+          └── prototype_hud.gd
+  ```
+- [ ] Configure Input Map (Project Settings → Input Map):
+  - `thrust_forward` → W
+  - `rotate_left` → A
+  - `rotate_right` → D
+  - `fire` → Space
+  - `restart` → R
+- [ ] Set project settings:
+  - Window size: 1280x720
+  - Stretch mode: viewport
+  - Aspect: keep
 
-**Deliverable:** Complete life/death cycle
+### Phase 2: Player Ship (1 hour)
 
-#### Day 10-11: Spawn System & Difficulty
-- [ ] Create SpawnManager
-- [ ] Implement time-based spawn rate
-- [ ] Add difficulty scaling over time
-- [ ] Increase asteroid speed with time
-- [ ] Test and balance spawn patterns
-
-**Deliverable:** Escalating challenge over time
-
-#### Day 12-14: Basic Progression
-- [ ] Implement credit earning system
-- [ ] Create UpgradeManager
-- [ ] Create 3 ScriptableObject upgrades
-  - Energy Shield SO
-  - Rapid Fire SO
-  - Piercing Rounds SO
-- [ ] Build simple upgrade menu UI
-- [ ] Implement upgrade purchase flow
-- [ ] Apply upgrades to ship stats
-
-**Deliverable:** Working upgrade loop between runs
-
-**Week 2 Milestone:** Complete core loop - play, die, upgrade, replay
-
----
-
-### Week 3: Expanded Content (Jan 17-23, 2026)
-
-#### Day 15-16: Enemy System
-- [ ] Create Enemy base class
-- [ ] Create UFO enemy prefab
-- [ ] Implement chase behavior
-- [ ] Add UFO shooting
-- [ ] Spawn UFOs based on difficulty
-- [ ] Award credits on UFO destruction
-
-**Deliverable:** Second threat type
-
-#### Day 17-18: Pickups & Resources
-- [ ] Create crystal pickup prefab
-- [ ] Crystals drop from destroyed objects
-- [ ] Auto-collect on proximity
-- [ ] Display crystal count in UI
-- [ ] Crystals contribute to credits earned
-- [ ] Create 1 temporary pickup (Speed Boost)
-- [ ] Implement pickup effects system
-
-**Deliverable:** Resource collection and temporary buffs
-
-#### Day 19-21: Dynamic Difficulty (Basic)
-- [ ] Create DifficultyManager (simplified)
-- [ ] Track shield percentage
-- [ ] Reduce spawn rate when shield < 30%
-- [ ] Increase spawn rate when shield > 70%
-- [ ] Smooth transitions between difficulty states
-- [ ] Display difficulty indicator (optional)
-
-**Deliverable:** Adaptive difficulty system
-
-**Week 3 Milestone:** Expanded gameplay with enemies, pickups, and adaptive difficulty
-
----
-
-### Week 4: Polish & Testing (Jan 24-30, 2026)
-
-#### Day 22-23: Visual Polish
-- [ ] Add particle systems for explosions
-- [ ] Implement screen shake
-- [ ] Add glow effects to ship/pickups
-- [ ] Visual feedback for damage (flash red)
-- [ ] Visual feedback for collection (pulse)
-- [ ] Minimap implementation (simple)
-
-**Deliverable:** Improved visual feedback
-
-#### Day 24-25: Audio & Juice
-- [ ] Find/create placeholder SFX
-  - Laser shot
-  - Explosion
-  - Pickup collect
-  - Shield hit
-- [ ] Implement AudioManager (simple)
-- [ ] Add haptic feedback (mobile)
-- [ ] Tweak particle effects timing
-
-**Deliverable:** Basic audio feedback
-
-#### Day 26-28: Balance & Testing
-- [ ] Playtest 10+ runs
-- [ ] Balance difficulty curve
-- [ ] Tune upgrade costs and effects
-- [ ] Adjust spawn rates
-- [ ] Fix bugs and edge cases
-- [ ] Optimize performance (60 FPS target)
-
-**Deliverable:** Balanced, bug-free prototype
-
-#### Day 29-30: Build & Documentation
-- [ ] Build for PC (Windows/Mac)
-- [ ] Build for Android (test device)
-- [ ] Create playtest instructions
-- [ ] Document known issues
-- [ ] Prepare feedback form
-- [ ] Package and distribute to testers
-
-**Deliverable:** Playable builds ready for feedback
-
-**Week 4 Milestone:** Polished prototype ready for external testing
-
----
-
-## 4. Technical Implementation Priority
-
-### 4.1 Core Architecture (Week 1)
-
-**Keep It Simple!**
-
+**Scene Structure**: `Src/scenes/prototype/player.tscn`
 ```
-Prototype Architecture:
-- MonoBehaviour-based (no complex patterns yet)
-- Direct references (no event bus initially)
-- Hard-coded values (no ScriptableObjects yet)
-- Simple managers (GameManager, SpawnManager)
+Player (CharacterBody2D)
+├── Sprite2D (white triangle)
+│   └── Polygon2D (triangle points: [0,-20], [-15,15], [15,15])
+├── CollisionPolygon2D (same triangle points)
+└── ShootPoint (Marker2D at [0, -25] for projectile spawn)
 ```
 
-**Why Simple?**
-- Faster iteration
-- Easier debugging
-- Can refactor later based on learnings
+**Script**: `Src/scripts/prototype/player.gd`
+```gdscript
+class_name Player
+extends CharacterBody2D
 
-### 4.2 Data Structure (Week 2-3)
+signal died
+signal shield_changed(current: float, maximum: float)
 
-**Minimal Data-Driven**
+const ACCELERATION = 200.0
+const MAX_SPEED = 300.0
+const ROTATION_SPEED = 3.0
+const FIRE_RATE = 0.5  # seconds between shots
 
-Only introduce ScriptableObjects when needed:
-- Week 2: Upgrade definitions
-- Week 3: Enemy definitions (if needed)
+@export var projectile_scene: PackedScene
+@export var max_shield: float = 100.0
 
-Keep everything else hard-coded for speed.
+var current_shield: float
+var _fire_timer: float = 0.0
 
-### 4.3 Optimization Focus
+@onready var shoot_point: Marker2D = $ShootPoint
 
-**Performance Targets**
-- 60 FPS on mid-range mobile device
-- < 50 objects on screen at once
-- Pool only if needed (asteroids, projectiles)
+func _ready() -> void:
+	current_shield = max_shield
+	shield_changed.emit(current_shield, max_shield)
 
-**Don't Over-Optimize**
-- Profile first, optimize later
-- Focus on gameplay feel over perfect code
+func _physics_process(delta: float) -> void:
+	_handle_input(delta)
+	_update_movement(delta)
+	_wrap_around_screen()
 
----
+func _handle_input(delta: float) -> void:
+	# Rotation
+	var rotation_input = Input.get_axis("rotate_left", "rotate_right")
+	rotation += rotation_input * ROTATION_SPEED * delta
 
-## 5. Playtesting Plan
+	# Thrust
+	if Input.is_action_pressed("thrust_forward"):
+		var direction = Vector2.UP.rotated(rotation)
+		velocity += direction * ACCELERATION * delta
+		velocity = velocity.limit_length(MAX_SPEED)
 
-### 5.1 Internal Testing (Week 2-3)
+	# Shooting
+	if _fire_timer > 0:
+		_fire_timer -= delta
 
-**Daily Playtests**
-- Play 2-3 full runs every day
-- Document issues immediately
-- Tweak and iterate based on feel
+	if Input.is_action_pressed("fire") and _fire_timer <= 0:
+		_fire()
 
-**Test Checklist**
-- [ ] Controls feel responsive
-- [ ] Difficulty feels fair
-- [ ] Upgrades make noticeable difference
-- [ ] Session length is 3-5 minutes average
-- [ ] Want to play "one more run"
+func _update_movement(_delta: float) -> void:
+	move_and_slide()
 
-### 5.2 External Alpha Test (Week 4)
+func _fire() -> void:
+	_fire_timer = FIRE_RATE
 
-**Target Testers:** 5-10 people
-- Mix of gamers and non-gamers
-- Include target age range (8-17 if possible)
-- Both mobile and PC users
+	var projectile = projectile_scene.instantiate()
+	projectile.global_position = shoot_point.global_position
+	projectile.global_rotation = global_rotation
+	get_parent().add_child(projectile)
 
-**Feedback Questions**
-1. How fun is the game (1-10)?
-2. How long did your first run last?
-3. Were the controls intuitive?
-4. Did you understand the upgrade system?
-5. What frustrated you?
-6. What did you enjoy most?
-7. Would you play again?
+func _wrap_around_screen() -> void:
+	var screen_size = get_viewport_rect().size
+	var pos = global_position
 
-**Data to Collect**
-- Average session length
-- Number of runs per tester
-- Difficulty level reached
-- Most purchased upgrades
-- Common death causes
+	if pos.x < 0:
+		pos.x = screen_size.x
+	elif pos.x > screen_size.x:
+		pos.x = 0
 
----
+	if pos.y < 0:
+		pos.y = screen_size.y
+	elif pos.y > screen_size.y:
+		pos.y = 0
 
-## 6. Success Criteria
+	global_position = pos
 
-### 6.1 Prototype is Successful If:
+func take_damage(amount: float) -> void:
+	current_shield -= amount
+	shield_changed.emit(current_shield, max_shield)
 
-✅ **Gameplay**
-- Playtesters rate fun > 6/10
-- Average session length: 3-5 minutes
-- 70%+ want to play multiple runs
-- Controls understood in < 1 minute
+	if current_shield <= 0:
+		died.emit()
+		queue_free()
 
-✅ **Technical**
-- Maintains 60 FPS on target devices
-- No game-breaking bugs
-- Builds run on Windows, Mac, Android
+func _on_body_entered(body: Node) -> void:
+	if body.is_in_group("asteroid"):
+		var asteroid = body as Asteroid
+		if asteroid:
+			take_damage(asteroid.collision_damage)
+```
 
-✅ **Progression**
-- Players understand upgrade system
-- Upgrades feel impactful
-- Want to earn credits for next upgrade
+**Physics Settings**:
+- Motion Mode: Floating
+- Collision Layer: 1 (player)
+- Collision Mask: 2 (asteroids)
 
-✅ **Difficulty**
-- Players survive 2+ minutes average
-- Difficulty ramps feel fair
-- Deaths feel earned, not cheap
-
-### 6.2 Go/No-Go Decision Points
-
-**After Week 2:**
-- Is core loop fun? (play → die → upgrade → replay)
-- If NO → Pivot or iterate core mechanics
-- If YES → Continue to Week 3
-
-**After Week 4:**
-- Do playtesters want more content?
-- Are they willing to pay for full version?
-- If NO → Re-evaluate concept
-- If YES → Proceed to production
+**Add player to group "player"** in the Node tab
 
 ---
 
-## 7. Resource Requirements
+### Phase 3: Projectile System (45 min)
 
-### 7.1 Development Tools
+**Scene Structure**: `Src/scenes/prototype/projectile.tscn`
+```
+Projectile (Area2D)
+├── Sprite2D (small white rectangle 4x10)
+│   └── ColorRect (white, 4x10 pixels)
+├── CollisionShape2D (RectangleShape2D 4x10)
+└── VisibleOnScreenNotifier2D
+```
 
-**Required**
-- Unity 6.3 LTS (free)
-- Visual Studio Code / Visual Studio
-- Git + GitHub (free)
-- Figma (for UI mockups, free)
+**Script**: `Src/scripts/prototype/projectile.gd`
+```gdscript
+class_name Projectile
+extends Area2D
 
-**Optional**
-- Unity Asset Store (free assets)
-- Audacity (free SFX editing)
-- Paint.NET / GIMP (free sprite editing)
+const SPEED = 400.0
+const DAMAGE = 10.0
 
-### 7.2 Assets Needed
+var velocity: Vector2
 
-**Art (Primitives Only)**
-- Ship: White triangle
-- Asteroids: Gray polygons
-- Projectiles: White lines
-- Enemies: Red squares
-- Pickups: Colored circles
-- UI: Colored rectangles/bars
+func _ready() -> void:
+	velocity = Vector2.UP.rotated(global_rotation) * SPEED
+	area_entered.connect(_on_area_entered)
+	$VisibleOnScreenNotifier2D.screen_exited.connect(_on_screen_exited)
 
-**Audio (Week 4)**
-- 5-8 placeholder SFX from free libraries
-- No music needed for prototype
+func _physics_process(delta: float) -> void:
+	global_position += velocity * delta
 
-### 7.3 Team (Solo Developer Assumed)
+func _on_area_entered(area: Area2D) -> void:
+	if area.is_in_group("asteroid"):
+		var asteroid = area as Asteroid
+		if asteroid:
+			asteroid.take_damage(DAMAGE)
+			queue_free()
 
-**Time Commitment**
-- 4-6 hours per day
-- 5-6 days per week
-- Total: ~120 hours over 4 weeks
+func _on_screen_exited() -> void:
+	queue_free()
+```
 
-**Skills Needed**
-- Unity basics
-- C# programming
-- Basic 2D physics knowledge
-- UI/UX fundamentals
-
----
-
-## 8. Risk Management
-
-### 8.1 Potential Risks
-
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Controls feel unresponsive | Medium | High | Iterate daily, test on multiple devices |
-| Difficulty too hard/easy | High | Medium | Playtest frequently, adjust parameters |
-| Upgrades don't feel impactful | Medium | High | Use larger percentage increases (50%+) |
-| Performance issues on mobile | Low | Medium | Profile early, limit on-screen objects |
-| Scope creep | High | High | Strict feature lock after Week 2 |
-| Motivation/burnout | Medium | High | Set realistic daily goals, take breaks |
-
-### 8.2 Contingency Plans
-
-**If Behind Schedule:**
-- Cut nice-to-have features from Week 4
-- Focus on core loop quality over content quantity
-- Extend by 3-5 days if absolutely necessary
-
-**If Ahead of Schedule:**
-- Add 1-2 more upgrade options
-- Polish visual effects more
-- Add simple background music
-- Start on stretch goals (black holes, etc.)
+**Settings**:
+- Collision Layer: 4 (projectiles)
+- Collision Mask: 2 (asteroids)
 
 ---
 
-## 9. Daily Task Template
+### Phase 4: Asteroid System (1.5 hours)
 
-### Example Day Structure
+**Scene Structure**: `Src/scenes/prototype/asteroid.tscn`
+```
+Asteroid (RigidBody2D)
+├── Polygon2D (gray irregular polygon)
+├── CollisionPolygon2D (same points)
+└── VisibleOnScreenNotifier2D
+```
 
-**Morning (2-3 hours)**
-- Review yesterday's progress
-- Pick 1-2 tasks from milestone
-- Implement features
-- Commit code
+**Script**: `Src/scripts/prototype/asteroid.gd`
+```gdscript
+class_name Asteroid
+extends RigidBody2D
 
-**Afternoon (2-3 hours)**
-- Playtest implemented features
-- Fix bugs found
-- Iterate based on feel
-- Document issues
+signal destroyed(score_value: int)
 
-**Evening (30 min)**
-- Quick playtest
-- Update task list
-- Plan tomorrow's work
-- Push to Git
+enum Size {LARGE, MEDIUM, SMALL}
 
----
+@export var size: Size = Size.LARGE
 
-## 10. Post-Prototype Next Steps
+var health: float
+var collision_damage: float
+var score_value: int
+var rotation_speed: float
 
-### If Prototype is Successful:
+func _ready() -> void:
+	add_to_group("asteroid")
+	_setup_size()
+	rotation_speed = randf_range(-1.0, 1.0)
+	body_entered.connect(_on_body_entered)
 
-**Immediate (Week 5-6)**
-1. Analyze all playtest feedback
-2. Create prioritized feature backlog
-3. Refactor prototype code with proper architecture
-4. Implement ScriptableObject system fully
-5. Set up proper project structure
+func _setup_size() -> void:
+	match size:
+		Size.LARGE:
+			health = 30.0
+			collision_damage = 40.0
+			score_value = 100
+			scale = Vector2.ONE * 1.0
+		Size.MEDIUM:
+			health = 15.0
+			collision_damage = 20.0
+			score_value = 50
+			scale = Vector2.ONE * 0.6
+		Size.SMALL:
+			health = 5.0
+			collision_damage = 10.0
+			score_value = 25
+			scale = Vector2.ONE * 0.35
 
-**Production Planning (Week 7-8)**
-1. Define full feature set from GDD
-2. Create production timeline (8-12 weeks)
-3. Design complete progression system
-4. Plan monetization integration
-5. Set quality bar for art/audio
+func _physics_process(delta: float) -> void:
+	rotate(rotation_speed * delta)
+	_wrap_around_screen()
 
-**Production Phase (Week 9+)**
-- Implement remaining game systems
-- Create all content (10+ items, 5+ enemies)
-- Full UI/UX design and implementation
-- Professional audio/music
-- Comprehensive testing
-- Soft launch and iteration
+func _wrap_around_screen() -> void:
+	var screen_size = get_viewport().get_visible_rect().size
+	var pos = global_position
 
----
+	if pos.x < -50:
+		pos.x = screen_size.x + 50
+	elif pos.x > screen_size.x + 50:
+		pos.x = -50
 
-## 11. Success Metrics Summary
+	if pos.y < -50:
+		pos.y = screen_size.y + 50
+	elif pos.y > screen_size.y + 50:
+		pos.y = -50
 
-### Week 1 Success
-- ✅ Ship movement feels good
-- ✅ Can shoot and destroy asteroids
-- ✅ Asteroids fragment properly
-- ✅ Playable for 1+ minute
+	global_position = pos
 
-### Week 2 Success  
-- ✅ Shield system works
-- ✅ Game over and restart flow
-- ✅ Can earn credits and buy upgrades
-- ✅ Upgrades apply to next run
-- ✅ Complete loop functional
+func take_damage(amount: float) -> void:
+	health -= amount
+	if health <= 0:
+		_split()
+		destroyed.emit(score_value)
+		queue_free()
 
-### Week 3 Success
-- ✅ Enemies add challenge
-- ✅ Pickups add variety
-- ✅ Dynamic difficulty feels adaptive
-- ✅ 5+ minutes of engaging gameplay
+func _split() -> void:
+	if size == Size.SMALL:
+		return  # Don't split, just destroy
 
-### Week 4 Success
-- ✅ Polished visuals and audio
-- ✅ 60 FPS performance
-- ✅ Builds run on all platforms
-- ✅ Positive playtester feedback
-- ✅ Clear path to production
+	var next_size = Size.MEDIUM if size == Size.LARGE else Size.SMALL
+	var split_count = 3 if size == Size.LARGE else 2
 
----
+	for i in split_count:
+		var asteroid = duplicate()
+		asteroid.size = next_size
+		asteroid.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
 
-## 12. Prototype Deliverables Checklist
+		# Random velocity for split pieces
+		var angle = (TAU / split_count) * i + randf_range(-0.3, 0.3)
+		var speed = randf_range(100, 200)
+		asteroid.linear_velocity = Vector2.UP.rotated(angle) * speed
 
-### Code Deliverables
-- [ ] Unity project (zipped or Git repo)
-- [ ] Source code with comments
-- [ ] Build files (Windows, Mac, Android)
-- [ ] README with build instructions
+		get_parent().call_deferred("add_child", asteroid)
 
-### Documentation
-- [ ] Feature list (implemented vs. planned)
-- [ ] Known issues log
-- [ ] Playtesting results summary
-- [ ] Performance benchmark report
+func _on_body_entered(body: Node) -> void:
+	# Collision with player handled by player script
+	pass
+```
 
-### Assets
-- [ ] All art assets (sprites, particles)
-- [ ] All audio files
-- [ ] UI mockups/wireframes
+**Settings**:
+- Body Type: Rigid
+- Gravity Scale: 0
+- Linear Damp: 0
+- Angular Damp: 0
+- Collision Layer: 2 (asteroids)
+- Collision Mask: 1 (player)
 
-### Presentation
-- [ ] Gameplay video (2-3 minutes)
-- [ ] Screenshot gallery (5-10 images)
-- [ ] Pitch deck (10 slides)
-  - Problem/solution
-  - Core gameplay
-  - Unique mechanics
-  - Progression system
-  - Target audience
-  - Monetization plan
-  - Competition analysis
-  - Development roadmap
-  - Team/skills
-  - Ask/next steps
+**Create 3 asteroid variants with different polygon shapes in the Polygon2D node**
 
 ---
 
-## Conclusion
+### Phase 5: Spawner System (45 min)
 
-This 4-week prototype plan focuses on **rapid iteration** and **proving the core fun** of Void Survivor. By keeping scope minimal and focusing on the essential gameplay loop, we can quickly determine if the game concept is viable before committing to full production.
+**Script**: `Src/scripts/prototype/spawner.gd`
+```gdscript
+class_name Spawner
+extends Node
 
-**Key Principles:**
-- 🎯 **Focus:** Core loop first, content later
-- ⚡ **Speed:** Simple architecture for fast iteration
-- 🎮 **Playability:** Daily playtests to ensure fun
-- 📊 **Data:** Collect feedback to inform decisions
-- 🚀 **Momentum:** Ship something playable every week
+@export var asteroid_scene: PackedScene
+@export var spawn_interval: float = 3.0
+@export var max_asteroids: int = 15
 
-**Remember:** The goal is not perfection—it's learning and validation. Ship early, test often, iterate quickly!
+var _spawn_timer: float = 0.0
+var _active_asteroids: int = 0
+
+func _ready() -> void:
+	_spawn_timer = spawn_interval
+
+func _process(delta: float) -> void:
+	_spawn_timer -= delta
+
+	if _spawn_timer <= 0 and _active_asteroids < max_asteroids:
+		_spawn_asteroid()
+		_spawn_timer = spawn_interval
+
+func _spawn_asteroid() -> void:
+	var asteroid = asteroid_scene.instantiate() as Asteroid
+
+	# Random edge position
+	var spawn_pos = _get_random_edge_position()
+	asteroid.global_position = spawn_pos
+
+	# Velocity toward screen center with variance
+	var screen_center = get_viewport().get_visible_rect().size / 2
+	var direction = (screen_center - spawn_pos).normalized()
+	var angle_variance = randf_range(-0.5, 0.5)
+	direction = direction.rotated(angle_variance)
+	var speed = randf_range(50, 100)
+
+	asteroid.linear_velocity = direction * speed
+	asteroid.destroyed.connect(_on_asteroid_destroyed)
+
+	get_parent().add_child(asteroid)
+	_active_asteroids += 1
+
+func _get_random_edge_position() -> Vector2:
+	var screen_size = get_viewport().get_visible_rect().size
+	var edge = randi() % 4
+
+	match edge:
+		0:  # Top
+			return Vector2(randf() * screen_size.x, -50)
+		1:  # Right
+			return Vector2(screen_size.x + 50, randf() * screen_size.y)
+		2:  # Bottom
+			return Vector2(randf() * screen_size.x, screen_size.y + 50)
+		_:  # Left
+			return Vector2(-50, randf() * screen_size.y)
+
+func _on_asteroid_destroyed(_score: int) -> void:
+	_active_asteroids = max(0, _active_asteroids - 1)
+```
+
+---
+
+### Phase 6: Game Manager (1 hour)
+
+**Script**: `Src/scripts/prototype/game_manager.gd`
+```gdscript
+class_name GameManager
+extends Node
+
+signal score_updated(new_score: int)
+signal game_over
+
+var current_score: int = 0
+var is_playing: bool = true
+
+@onready var player: Player = get_tree().get_first_node_in_group("player")
+
+func _ready() -> void:
+	if player:
+		player.died.connect(_on_player_died)
+
+	# Connect to all asteroids' destroyed signals
+	get_tree().node_added.connect(_on_node_added)
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("restart") and not is_playing:
+		get_tree().reload_current_scene()
+
+func add_score(amount: int) -> void:
+	current_score += amount
+	score_updated.emit(current_score)
+
+func _on_player_died() -> void:
+	is_playing = false
+	game_over.emit()
+
+func _on_node_added(node: Node) -> void:
+	if node is Asteroid:
+		node.destroyed.connect(add_score)
+```
+
+**Scene Structure**: `Src/scenes/prototype/game.tscn`
+```
+Game (Node2D)
+├── Camera2D (Position: [640, 360], Enabled: true)
+├── ColorRect (Color: #000000, Size: 1280x720) - Background
+├── GameManager (Node with game_manager.gd)
+├── Spawner (Node with spawner.gd)
+├── Player (instance of player.tscn at center)
+└── HUD (instance of prototype_hud.tscn)
+```
+
+---
+
+### Phase 7: Basic HUD (45 min)
+
+**Scene Structure**: `Src/scenes/ui/prototype_hud.tscn`
+```
+HUD (CanvasLayer)
+└── Control (FullRect)
+    ├── MarginContainer (Margin: 20)
+    │   ├── TopBar (HBoxContainer)
+    │   │   ├── ShieldBar (ProgressBar)
+    │   │   │   └── Properties: Max Value: 100, Show Percentage: false
+    │   │   └── ScoreLabel (Label)
+    │   │       └── Text: "Score: 0"
+    └── GameOverPanel (CenterContainer)
+        └── VBoxContainer
+            ├── GameOverLabel (Label)
+            │   └── Text: "GAME OVER"
+            └── RestartLabel (Label)
+                └── Text: "Press R to Restart"
+```
+
+**Script**: `Src/scripts/prototype/prototype_hud.gd`
+```gdscript
+extends CanvasLayer
+
+@onready var shield_bar: ProgressBar = %ShieldBar
+@onready var score_label: Label = %ScoreLabel
+@onready var game_over_panel: CenterContainer = %GameOverPanel
+
+func _ready() -> void:
+	game_over_panel.hide()
+
+	var player = get_tree().get_first_node_in_group("player")
+	if player:
+		player.shield_changed.connect(_on_shield_changed)
+		player.died.connect(_on_player_died)
+
+	var game_manager = get_tree().get_first_node_in_group("game_manager")
+	if game_manager:
+		game_manager.score_updated.connect(_on_score_updated)
+
+func _on_shield_changed(current: float, maximum: float) -> void:
+	shield_bar.value = (current / maximum) * 100.0
+
+func _on_score_updated(new_score: int) -> void:
+	score_label.text = "Score: %d" % new_score
+
+func _on_player_died() -> void:
+	game_over_panel.show()
+```
+
+**Add GameManager to group "game_manager"** in the Node tab
+
+---
+
+### Phase 8: Integration & Testing (1 hour)
+
+**Checklist**:
+- [ ] Wire up all scene references:
+  - Player → Projectile scene reference
+  - Spawner → Asteroid scene reference
+- [ ] Test player movement (adjust ACCELERATION and MAX_SPEED if needed)
+- [ ] Test shooting (adjust FIRE_RATE if too slow/fast)
+- [ ] Test asteroid splitting (should feel satisfying)
+- [ ] Test collision damage (adjust damage values if too harsh/weak)
+- [ ] Test spawning (adjust spawn_interval if too easy/hard)
+- [ ] Test game over flow (death → restart)
+- [ ] Balance pass:
+  - Can you survive 2-3 minutes on first try?
+  - Do asteroids feel threatening?
+  - Does shooting feel responsive?
+- [ ] Fix any bugs
+
+---
+
+## Visual Style (Prototype)
+
+**Ultra-minimalist placeholders**:
+- **Player**: White triangle (Polygon2D: points [0,-20], [-15,15], [15,15])
+- **Asteroids**: Gray irregular polygons (create 3 variants with different point arrays)
+- **Projectiles**: White rectangle (4x10 pixels)
+- **Background**: Pure black (#000000)
+- **UI**: Default Godot theme, white text on dark background
+
+**No custom art needed** - use built-in Godot nodes (Polygon2D, ColorRect).
+
+---
+
+## Success Criteria
+
+The prototype is "done" when:
+- ✅ Player can fly around with satisfying inertia
+- ✅ Shooting feels responsive and accurate
+- ✅ Asteroids split in a satisfying way
+- ✅ Getting hit by asteroids feels dangerous
+- ✅ Game loop is clear: shoot → survive → score
+- ✅ Can play for 2-3 minutes before death
+- ✅ Core gameplay "feel" is fun
+
+---
+
+## Testing Questions
+
+After building the prototype, answer these:
+
+1. **Movement Feel**
+   - Does the ship feel too floaty? Too stiff?
+   - Is rotation speed right?
+   - Does screen wrap feel natural?
+
+2. **Combat Feel**
+   - Are asteroids satisfying to destroy?
+   - Is the fire rate too slow/fast?
+   - Do projectiles feel impactful?
+
+3. **Difficulty**
+   - How long can you survive on first try?
+   - Does it ramp up naturally as asteroids multiply?
+   - Is it too punishing or too easy?
+
+4. **Core Loop**
+   - Is it fun for 5 minutes without upgrades?
+   - Do you want to restart after dying?
+   - Can you see the potential with progression added?
+
+---
+
+## Next Steps After Prototype
+
+If the prototype feels good:
+1. Add basic shield regeneration (test auto-heal mechanic)
+2. Add ONE enemy type (UFO) to test combat variety
+3. Add temporary pickup (Speed Boost) to test buff system
+4. Add simple difficulty scaling (spawn rate increases over time)
+
+Then move to full implementation with progression systems from the Technical Spec.
+
+---
+
+## Time Estimate
+
+| Phase | Time | Cumulative |
+|-------|------|------------|
+| Project Setup | 30 min | 0.5 hr |
+| Player Ship | 1 hr | 1.5 hr |
+| Projectile System | 45 min | 2.25 hr |
+| Asteroid System | 1.5 hr | 3.75 hr |
+| Spawner System | 45 min | 4.5 hr |
+| Game Manager | 1 hr | 5.5 hr |
+| Basic HUD | 45 min | 6.25 hr |
+| Integration & Testing | 1 hr | **7.25 hr** |
+
+**Total: ~7-8 hours** for a playable prototype.
+
+With focused work: **1-2 days** to completion.
+
+---
+
+## File Checklist
+
+**Scenes** (5 files):
+- [ ] `Src/scenes/prototype/game.tscn`
+- [ ] `Src/scenes/prototype/player.tscn`
+- [ ] `Src/scenes/prototype/projectile.tscn`
+- [ ] `Src/scenes/prototype/asteroid.tscn`
+- [ ] `Src/scenes/ui/prototype_hud.tscn`
+
+**Scripts** (6 files):
+- [ ] `Src/scripts/prototype/player.gd`
+- [ ] `Src/scripts/prototype/projectile.gd`
+- [ ] `Src/scripts/prototype/asteroid.gd`
+- [ ] `Src/scripts/prototype/spawner.gd`
+- [ ] `Src/scripts/prototype/game_manager.gd`
+- [ ] `Src/scripts/prototype/prototype_hud.gd`
+
+**Total: 11 files** to create a working prototype.
+
+---
+
+## Prototype Philosophy
+
+> "Build the smallest thing that proves the game is fun."
+
+Focus on:
+- ✅ **Feel** over features
+- ✅ **Iteration speed** over perfection
+- ✅ **Core loop** over content
+- ✅ **Playability** over visuals
+
+Everything else can be added after the core feels right.
+
+---
+
+**Ready to build!** 🚀
