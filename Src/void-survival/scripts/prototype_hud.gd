@@ -2,6 +2,7 @@ extends CanvasLayer
 
 @onready var shield_bar: ProgressBar = %ShieldBar
 @onready var score_label: Label = %ScoreLabel
+@onready var crystal_label: Label = %CrystalLabel
 @onready var game_over_panel: CenterContainer = %GameOverPanel
 
 func _ready() -> void:
@@ -20,11 +21,19 @@ func _ready() -> void:
 	else:
 		push_warning("HUD: No game_manager found in scene!")
 
+	# Connect to ResourceManager
+	ResourceManager.crystals_changed.connect(_on_crystals_changed)
+
 func _on_shield_changed(current: float, maximum: float) -> void:
 	shield_bar.value = (current / maximum) * 100.0
 
 func _on_score_updated(new_score: int) -> void:
 	score_label.text = "Score: %d" % new_score
+
+
+func _on_crystals_changed(current: int) -> void:
+	crystal_label.text = "Crystals: %d" % current
+
 
 func _on_player_died() -> void:
 	game_over_panel.show()

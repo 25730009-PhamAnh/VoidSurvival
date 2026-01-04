@@ -19,10 +19,12 @@ var _fire_timer: float = 0.0
 var _invincibility_timer: float = 0.0
 
 @onready var shoot_point: Marker2D = $ShootPoint
+@onready var collection_component: Area2D = $CollectionComponent
 
 func _ready() -> void:
 	current_shield = max_shield
 	shield_changed.emit(current_shield, max_shield)
+	collection_component.item_collected.connect(_on_item_collected)
 
 func _physics_process(delta: float) -> void:
 	_handle_input(delta)
@@ -107,3 +109,9 @@ func take_damage(amount: float) -> void:
 	else:
 		# Activate invincibility after taking damage
 		_invincibility_timer = INVINCIBILITY_TIME
+
+
+func _on_item_collected(item: Node2D, value: int) -> void:
+	if item.has_signal("collected"):
+		item.collected.emit(value)
+	ResourceManager.add_crystals(value)

@@ -1,17 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://d1n5x7q8p4w2v"]
+[gd_scene load_steps=4 format=3 uid="uid://d1n5x7q8p4w2v"]
 
-[ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
+[ext_resource type="Script" uid="uid://dqtu6tjtbxh82" path="res://scripts/player.gd" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://bm8xqyh1n7g4v" path="res://scenes/prototype/projectile.tscn" id="2_projectile"]
+[ext_resource type="PackedScene" uid="uid://cp5l8j7xqxhdn" path="res://scenes/components/collection_component.tscn" id="3_collection"]
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
-collision_layer = 1
 collision_mask = 2
 motion_mode = 1
 script = ExtResource("1_player")
 projectile_scene = ExtResource("2_projectile")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
-color = Color(1, 1, 1, 1)
 polygon = PackedVector2Array(0, -20, -15, 15, 15, 15)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
@@ -19,3 +18,6 @@ polygon = PackedVector2Array(0, -20, -15, 15, 15, 15)
 
 [node name="ShootPoint" type="Marker2D" parent="."]
 position = Vector2(0, -25)
+
+[node name="CollectionComponent" parent="." instance=ExtResource("3_collection")]
+collection_radius = 15.0

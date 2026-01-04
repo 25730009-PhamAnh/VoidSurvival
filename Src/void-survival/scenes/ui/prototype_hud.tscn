@@ -37,6 +37,13 @@ max_value = 100.0
 value = 100.0
 show_percentage = false
 
+[node name="CrystalLabel" type="Label" parent="Control/MarginContainer/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Crystals: 0"
+horizontal_alignment = 1
+
 [node name="ScoreLabel" type="Label" parent="Control/MarginContainer/TopBar"]
 unique_name_in_owner = true
 layout_mode = 2

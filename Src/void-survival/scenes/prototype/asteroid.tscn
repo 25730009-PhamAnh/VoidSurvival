@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cj4kw8h5p2m1x"]
+[gd_scene load_steps=3 format=3 uid="uid://cj4kw8h5p2m1x"]
 
 [ext_resource type="Script" uid="uid://0jpl56utlvgj" path="res://scripts/asteroid.gd" id="1_asteroid"]
+[ext_resource type="PackedScene" uid="uid://bsm3ql7y4kl8r" path="res://scenes/pickups/crystal.tscn" id="2_crystal"]
 
 [node name="Asteroid" type="RigidBody2D"]
 collision_layer = 2
@@ -8,6 +9,7 @@ gravity_scale = 0.0
 contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_asteroid")
+crystal_scene = ExtResource("2_crystal")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 color = Color(0.5, 0.5, 0.5, 1)

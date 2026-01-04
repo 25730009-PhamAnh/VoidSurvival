@@ -6,6 +6,7 @@ signal destroyed(score_value: int)
 enum Size {LARGE, MEDIUM, SMALL}
 
 @export var size: Size = Size.LARGE
+@export var crystal_scene: PackedScene
 
 var health: float
 var collision_damage: float
@@ -59,6 +60,7 @@ func _wrap_around_screen() -> void:
 func take_damage(amount: float) -> void:
 	health -= amount
 	if health <= 0:
+		_spawn_crystals()
 		_split()
 		destroyed.emit(score_value)
 		queue_free()
@@ -81,6 +83,26 @@ func _split() -> void:
 		asteroid.linear_velocity = Vector2.UP.rotated(angle) * speed
 
 		get_parent().call_deferred("add_child", asteroid)
+
+
+func _spawn_crystals() -> void:
+	if not crystal_scene:
+		return
+
+	var crystal_count = 0
+	match size:
+		Size.LARGE: crystal_count = randi_range(3, 5)
+		Size.MEDIUM: crystal_count = randi_range(2, 3)
+		Size.SMALL: crystal_count = 1
+
+	for i in crystal_count:
+		var crystal = crystal_scene.instantiate()
+		crystal.global_position = global_position + Vector2(
+			randf_range(-15, 15),
+			randf_range(-15, 15)
+		)
+		get_parent().call_deferred("add_child", crystal)
+
 
 func _on_body_entered(_body: Node) -> void:
 	# Collision with player handled by player script

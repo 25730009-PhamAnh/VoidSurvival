@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://cp5l8j7xqxhdn"]
+
+[ext_resource type="Script" path="res://scripts/components/collection_component.gd" id="1_collection"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_collection"]
+radius = 50.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_attraction"]
+radius = 150.0
+
+[node name="CollectionComponent" type="Area2D"]
+collision_layer = 0
+collision_mask = 256
+script = ExtResource("1_collection")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_collection")
+
+[node name="AttractionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 256
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttractionArea"]
+shape = SubResource("CircleShape2D_attraction")
