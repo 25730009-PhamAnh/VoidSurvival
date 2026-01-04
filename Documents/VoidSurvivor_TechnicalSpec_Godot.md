@@ -1458,6 +1458,422 @@ func _process(_delta: float) -> void:
 
 ---
 
+## 17. Module Integration Guide
+
+This section maps the **Development Plan modules** to the technical architecture, showing how each feature integrates with the existing systems.
+
+### 17.1 Module Integration Matrix
+
+| Module | Core Systems Used | Resources Created | Signals Used | New Components |
+|--------|------------------|-------------------|--------------|----------------|
+| **Module 1: Resources** | ScoreManager | `crystal.tscn` | `crystals_changed`, `item_collected` | CollectionComponent |
+| **Module 2: Save/Load** | SaveSystem | None (uses JSON) | None | None |
+| **Module 3: Credits** | ScoreManager, SaveSystem | None | `session_ended`, `credits_earned` | None |
+| **Module 4: Shop UI** | UpgradeSystem, SaveSystem | UI scenes | `item_purchased`, `stats_updated` | UI components |
+| **Module 5: Stats** | UpgradeSystem | ShipStats, ItemDefinition | `stats_updated` | None |
+| **Module 6: Enemies** | GameManager, spawners | EnemyDefinition | `destroyed`, `damaged` | Enemy behaviors |
+| **Module 7: Black Holes** | GameManager | `black_hole.tscn` | `overloaded`, `object_captured` | GravitationalComponent |
+| **Module 8: Difficulty** | GameManager | DifficultyConfig | `difficulty_changed` | DifficultyManager |
+| **Module 9: Weapons** | Player weapon system | Weapon scenes | `fired`, `weapon_switched` | WeaponBase subclasses |
+| **Module 10: VFX** | All gameplay systems | VFX scenes | Uses existing | ScreenShake, ObjectPool |
+| **Module 11: Menus** | SaveSystem, scene manager | Menu scenes | None | None |
+| **Module 12: Hyperspace** | Player | None | `hyperspace_used` | None |
+
+---
+
+### 17.2 Implementation Sequences
+
+#### Sequence 1: Resource Pickup Flow
+```
+Asteroid destroyed
+→ Emits destroyed(score, crystal_count)
+→ GameManager spawns crystal scene
+→ Crystal instance moves toward player
+→ Player's CollectionComponent detects crystal
+→ Crystal emits collected(value)
+→ ResourceManager updates crystal count
+→ HUD receives crystals_changed signal
+→ UI updates
+```
+
+#### Sequence 2: Upgrade Purchase Flow
+```
+Player in Upgrade Shop
+→ Clicks "Upgrade" on item
+→ Shop validates credit cost
+→ Calls UpgradeSystem.upgrade_item()
+→ UpgradeSystem updates item_levels dictionary
+→ Calls SaveSystem.save_game()
+→ Emits stats_updated signal
+→ Shop UI refreshes display
+→ Player sees new stats immediately
+```
+
+#### Sequence 3: Difficulty Scaling Flow
+```
+DifficultyManager _process()
+→ Samples performance metrics every 5s
+→ Calculates performance score
+→ Adjusts difficulty level
+→ Emits difficulty_changed(new_level)
+→ Spawners adjust spawn rates
+→ Enemy instances scale stats
+→ Player experiences adaptive challenge
+```
+
+---
+
+### 17.3 Critical Integration Points
+
+#### Player Initialization
+```gdscript
+# player.gd _ready()
+func _ready():
+    # Get final stats from UpgradeSystem
+    var stats = UpgradeSystem.get_final_stats()
+    _apply_stats(stats)
+    
+    # Connect to stat updates
+    UpgradeSystem.stats_updated.connect(_apply_stats)
+    
+    # Initialize health component
+    health_component.max_health = stats.max_shield
+    health_component.regeneration_rate = stats.shield_regen
+    health_component.regeneration_delay = stats.shield_delay
+    
+    # Initialize collection component
+    collection_component.collection_radius = stats.collection_radius
+```
+
+#### Spawner Initialization
+```gdscript
+# enemy_spawner.gd _ready()
+func _ready():
+    # Get enemy definitions
+    enemy_pool = _load_enemy_resources("res://resources/enemies/")
+    
+    # Connect to difficulty system
+    GameManager.difficulty_changed.connect(_on_difficulty_changed)
+    
+    # Start spawn timer
+    spawn_timer.timeout.connect(_spawn_enemy)
+
+func _on_difficulty_changed(new_difficulty: float):
+    # Adjust spawn rate based on difficulty
+    spawn_timer.wait_time = base_spawn_interval / (1.0 + new_difficulty * 0.01)
+```
+
+#### Item Effect Application
+```gdscript
+# upgrade_system.gd
+func get_final_stats() -> Dictionary:
+    # Start with base stats
+    var stats = ship_stats_resource.calculate_stats({})
+    
+    # Apply each equipped item
+    for item in equipped_items:
+        var level = item_levels.get(item, 0)
+        if level > 0:
+            item.apply_to_stats(stats, level)
+    
+    # Emit signal for listeners
+    stats_updated.emit(stats)
+    return stats
+```
+
+---
+
+### 17.4 Component Usage Patterns
+
+#### HealthComponent Pattern
+```gdscript
+# Any entity that needs health/shield
+# 1. Add HealthComponent as child in scene
+# 2. Configure exports in editor
+# 3. Connect signals
+
+@onready var health: HealthComponent = $HealthComponent
+
+func _ready():
+    health.died.connect(_on_death)
+    health.health_changed.connect(_on_health_changed)
+
+func take_damage(amount: float):
+    health.take_damage(amount)
+```
+
+#### CollectionComponent Pattern
+```gdscript
+# Player scene setup
+# 1. Add CollectionComponent as child
+# 2. Set collection_radius export
+# 3. Connect to pickup signal
+
+@onready var collection: CollectionComponent = $CollectionComponent
+
+func _ready():
+    collection.item_collected.connect(_on_item_collected)
+    
+func _on_item_collected(item: Node, value: int):
+    ResourceManager.add_crystals(value)
+    item.queue_free()
+```
+
+---
+
+### 17.5 Scene Dependencies
+
+#### Minimal Scene Structure
+
+**game_world.tscn** (Main gameplay scene):
+```
+GameWorld (Node2D)
+├── Player (CharacterBody2D)
+│   ├── HealthComponent
+│   ├── CollectionComponent
+│   ├── WeaponSystem
+│   └── Sprite2D
+├── AsteroidSpawner (Node)
+├── EnemySpawner (Node)
+├── BlackHoleSpawner (Node)
+├── Camera2D
+│   └── ScreenShake
+└── HUD (CanvasLayer)
+```
+
+**player.tscn**:
+```
+Player (CharacterBody2D)
+├── HealthComponent
+├── CollectionComponent
+├── WeaponSystem
+│   ├── LaserWeapon
+│   └── ShootPoint (Marker2D)
+├── Sprite2D
+├── CollisionShape2D
+└── ThrustParticles (GPUParticles2D)
+```
+
+**upgrade_shop.tscn**:
+```
+UpgradeShop (Control)
+├── Header (HBoxContainer)
+│   ├── BackButton
+│   └── CreditLabel
+├── ItemGrid (GridContainer)
+│   └── [UpgradeCards spawned at runtime]
+├── DetailPanel (PanelContainer)
+│   ├── ItemName
+│   ├── ItemDescription
+│   ├── StatsDisplay
+│   └── UpgradeButton
+└── EquipmentSlots (HBoxContainer)
+    └── [Slots 1-8]
+```
+
+---
+
+### 17.6 Resource Loading Patterns
+
+#### Loading All Items
+```gdscript
+# upgrade_shop.gd
+func _load_all_items() -> Array[ItemDefinition]:
+    var items: Array[ItemDefinition] = []
+    var categories = ["defensive", "offensive", "utility"]
+    
+    for category in categories:
+        var dir = DirAccess.open("res://resources/items/" + category)
+        if dir:
+            dir.list_dir_begin()
+            var file_name = dir.get_next()
+            while file_name != "":
+                if file_name.ends_with(".tres"):
+                    var item = load("res://resources/items/" + category + "/" + file_name)
+                    if item is ItemDefinition:
+                        items.append(item)
+                file_name = dir.get_next()
+    
+    return items
+```
+
+#### Dynamic Enemy Spawning
+```gdscript
+# enemy_spawner.gd
+func spawn_enemy():
+    # Pick random enemy definition
+    var enemy_def: EnemyDefinition = enemy_pool.pick_random()
+    
+    # Instance scene
+    var enemy = enemy_def.scene.instantiate()
+    
+    # Apply difficulty-scaled stats
+    var stats = enemy_def.get_stats_at_difficulty(current_difficulty)
+    enemy.health = stats.health
+    enemy.speed = stats.speed
+    enemy.damage = stats.damage
+    
+    # Add to scene
+    get_tree().current_scene.add_child(enemy)
+    
+    # Connect signals
+    enemy.destroyed.connect(_on_enemy_destroyed)
+```
+
+---
+
+### 17.7 Signal Flow Diagrams
+
+#### Game Start Flow
+```
+Main Menu "Play" pressed
+→ SceneManager.change_scene("game_world.tscn")
+→ GameWorld._ready()
+  → GameManager.start_game()
+    → game_started signal
+      → Spawners start timers
+      → HUD initializes
+      → Player becomes active
+```
+
+#### Game End Flow
+```
+Player health reaches 0
+→ HealthComponent emits died signal
+→ Player emits died signal
+→ GameManager._on_player_died()
+  → Stops spawners
+  → Calculates final score
+  → ScoreManager.calculate_credits()
+  → SaveSystem.save_game()
+  → Shows GameOverScreen
+    → Displays stats
+    → Awards credits
+    → Offers "Upgrades" or "Retry"
+```
+
+---
+
+### 17.8 Testing Integration Points
+
+#### Unit Testing Key Systems
+```gdscript
+# tests/test_upgrade_system.gd
+extends GutTest
+
+var upgrade_system: UpgradeSystem
+var test_item: ItemDefinition
+
+func before_all():
+    upgrade_system = UpgradeSystem.new()
+    test_item = ItemDefinition.new()
+    test_item.affected_stats = ["max_shield"]
+    test_item.base_bonus = 0.25
+
+func test_stat_calculation():
+    upgrade_system.equip_item(test_item, 0)
+    upgrade_system.item_levels[test_item] = 1
+    
+    var stats = upgrade_system.get_final_stats()
+    
+    # With 25% bonus, base 100 shield becomes 125
+    assert_eq(stats.max_shield, 125.0)
+```
+
+#### Integration Testing Scenarios
+```gdscript
+# tests/test_gameplay_integration.gd
+func test_asteroid_destruction_gives_crystals():
+    # Spawn asteroid
+    var asteroid = asteroid_scene.instantiate()
+    add_child(asteroid)
+    
+    # Record starting crystals
+    var start_crystals = ResourceManager.crystals
+    
+    # Destroy asteroid
+    asteroid.take_damage(9999)
+    
+    # Verify crystals increased
+    assert_gt(ResourceManager.crystals, start_crystals)
+```
+
+---
+
+### 17.9 Performance Optimization Integration
+
+#### Object Pooling Setup
+```gdscript
+# autoload/object_pool.gd
+class_name ObjectPool
+extends Node
+
+var pools: Dictionary = {}
+
+func get_object(scene: PackedScene) -> Node:
+    var pool_key = scene.resource_path
+    
+    if not pools.has(pool_key):
+        pools[pool_key] = []
+    
+    var pool = pools[pool_key]
+    
+    # Reuse inactive object if available
+    for obj in pool:
+        if not obj.is_inside_tree():
+            return obj
+    
+    # Create new object
+    var new_obj = scene.instantiate()
+    pool.append(new_obj)
+    return new_obj
+
+func return_object(obj: Node):
+    obj.get_parent().remove_child(obj)
+```
+
+#### Usage in Weapon System
+```gdscript
+# weapon_system.gd
+func fire():
+    var projectile = ObjectPool.get_object(projectile_scene)
+    projectile.position = shoot_point.global_position
+    projectile.velocity = Vector2.RIGHT.rotated(rotation) * projectile_speed
+    get_tree().current_scene.add_child(projectile)
+```
+
+---
+
+### 17.10 Mobile-Specific Integration
+
+#### Touch Input Layer
+```gdscript
+# scenes/ui/mobile_controls.tscn
+# Virtual joystick and fire button overlay
+
+func _input(event):
+    if event is InputEventScreenTouch:
+        if fire_button.get_rect().has_point(event.position):
+            Input.action_press("fire")
+```
+
+#### Performance Scaling
+```gdscript
+# autoload/settings_manager.gd
+func apply_mobile_optimizations():
+    # Reduce particle limits
+    Engine.max_particles = 500
+    
+    # Disable expensive shaders
+    RenderingServer.set_default_clear_color(Color.BLACK)
+    
+    # Lower physics FPS if needed
+    if OS.get_name() == "Android":
+        Engine.physics_ticks_per_second = 30
+```
+
+---
+
 **End of Technical Specification**
 
-*This architecture ensures Void Survivor can grow infinitely while remaining maintainable, testable, and designer-friendly. All core systems are data-driven, allowing rapid iteration without code changes.*
+*This architecture ensures Void Survivor can grow infinitely while remaining maintainable, testable, and designer-friendly. All core systems are data-driven, allowing rapid iteration without code changes. The modular design supports incremental development as outlined in the Development Plan.*
