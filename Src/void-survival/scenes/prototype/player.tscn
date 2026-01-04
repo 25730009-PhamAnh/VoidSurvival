@@ -19,5 +19,3 @@ polygon = PackedVector2Array(0, -20, -15, 15, 15, 15)
 
 [node name="ShootPoint" type="Marker2D" parent="."]
 position = Vector2(0, -25)
-
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]

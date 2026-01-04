@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://b31w6uarw2ev4" path="res://scripts/spawner.gd" id="2_spawner"]
 [ext_resource type="PackedScene" uid="uid://cj4kw8h5p2m1x" path="res://scenes/prototype/asteroid.tscn" id="3_asteroid"]
 [ext_resource type="PackedScene" uid="uid://d1n5x7q8p4w2v" path="res://scenes/prototype/player.tscn" id="4_player"]
-[ext_resource type="PackedScene" path="res://scenes/ui/prototype_hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" uid="uid://b7m3lax2h5w1v" path="res://scenes/ui/prototype_hud.tscn" id="5_hud"]
 
 [node name="Game" type="Node2D"]
 

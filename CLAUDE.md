@@ -1,3 +1,116 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+---
+
+## Project Overview
+
+**Void Survival** is a space shooter game built with **Godot 4.5** where players control a spaceship, destroy asteroids, and survive as long as possible. This is a Week 1 prototype implementing core gameplay mechanics.
+
+### Running the Game
+
+- **Open in Godot Editor**: Open `Src/void-survival/project.godot` in Godot 4.5+
+- **Run from Editor**: Press F5 or click the Play button
+- **Main Scene**: `res://scenes/prototype/game.tscn`
+
+### Project Structure
+
+```
+Src/void-survival/
+├── scenes/
+│   ├── prototype/          # Core gameplay scenes
+│   │   ├── game.tscn       # Main game scene (entry point)
+│   │   ├── player.tscn     # Player ship
+│   │   ├── asteroid.tscn   # Asteroid enemy
+│   │   └── projectile.tscn # Player bullet
+│   └── ui/
+│       └── prototype_hud.tscn  # HUD overlay
+└── scripts/                # GDScript files matching scenes
+    ├── game_manager.gd
+    ├── player.gd
+    ├── asteroid.gd
+    ├── projectile.gd
+    ├── spawner.gd
+    └── prototype_hud.gd
+```
+
+---
+
+## Game Architecture
+
+### Core Systems
+
+This game uses a **signal-based event system** for decoupled communication between gameplay systems:
+
+1. **GameManager** (`game_manager.gd`)
+   - Central coordinator for game state and score tracking
+   - Listens to player death and asteroid destruction events
+   - Uses `get_tree().node_added` to auto-connect to dynamically spawned asteroids
+   - Handles game restart via input action "restart"
+
+2. **Player** (`player.gd`)
+   - `CharacterBody2D` with custom movement physics (thrust + rotation)
+   - Emits `died` signal when shield reaches zero
+   - Emits `shield_changed(current, maximum)` signal for UI updates
+   - Instantiates projectiles at `ShootPoint` Marker2D with fire rate limiting
+
+3. **Spawner** (`spawner.gd`)
+   - Spawns asteroids at random screen edges with velocity toward center
+   - Tracks active asteroid count to enforce `max_asteroids` limit
+   - Decrements count when asteroids are destroyed via signal connection
+
+4. **Asteroid** (`asteroid.gd`)
+   - `RigidBody2D` with three sizes: LARGE, MEDIUM, SMALL
+   - Emits `destroyed(score_value)` signal before queue_free()
+   - Splits into smaller asteroids when destroyed (3 for LARGE, 2 for MEDIUM)
+   - Uses `duplicate()` for spawning split pieces
+   - Screen wrapping handled in `_physics_process`
+
+5. **Projectile** (`projectile.gd`)
+   - `Area2D` with linear velocity
+   - Auto-destroys when leaving screen via `VisibleOnScreenNotifier2D`
+   - Deals damage to asteroids on collision then queue_free()
+
+6. **HUD** (`prototype_hud.gd`)
+   - `CanvasLayer` for screen-space UI
+   - Finds player and game_manager via groups on `_ready()`
+   - Connects to signals for reactive UI updates
+   - Uses unique name references (`%ShieldBar`, `%ScoreLabel`) for node access
+
+### Signal Flow
+
+```
+Asteroid destroyed → GameManager.add_score() → score_updated → HUD updates score label
+                  → Spawner._on_asteroid_destroyed() → decrements active count
+
+Player hit → Player.take_damage() → shield_changed → HUD updates shield bar
+          → (if dead) died → GameManager._on_player_died() → game_over
+
+Projectile hits asteroid → Asteroid.take_damage() → destroyed signal → (see above)
+```
+
+### Input Actions
+
+Defined in `project.godot`:
+- `thrust_forward`: W key - Move ship forward
+- `rotate_left`: A key - Rotate counterclockwise
+- `rotate_right`: D key - Rotate clockwise
+- `fire`: SPACE - Shoot projectile
+- `restart`: R key - Restart game after death
+
+### Physics Layers
+
+1. **Layer 1**: Player
+2. **Layer 2**: Asteroids
+4. **Layer 4**: Projectiles
+
+**Note**: Zero gravity (`2d/default_gravity=0.0`) and no linear damping for space physics.
+
+---
+
+## Godot Best Practices (General)
+
 You are an expert in **Godot 4** and **GDScript**, and you strictly follow **Godot best practices** for scalable game development.
 
 ---
