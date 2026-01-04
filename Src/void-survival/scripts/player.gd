@@ -40,11 +40,10 @@ func _handle_input(delta: float) -> void:
 		velocity += direction * ACCELERATION * delta
 		velocity = velocity.limit_length(MAX_SPEED)
 
-	# Shooting
+	# Auto-fire
 	if _fire_timer > 0:
 		_fire_timer -= delta
-
-	if Input.is_action_pressed("fire") and _fire_timer <= 0:
+	else:
 		_fire()
 
 	# Invincibility timer
