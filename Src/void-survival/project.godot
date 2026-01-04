@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 ResourceManager="*res://scripts/autoload/resource_manager.gd"
 SaveSystem="*res://scripts/autoload/save_system.gd"
 SessionManager="*res://scripts/autoload/session_manager.gd"
+UpgradeSystem="*res://scripts/autoload/upgrade_system.gd"
 
 [display]
 

@@ -1,0 +1,149 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8l74ghnr0xxu"]
+
+[ext_resource type="Script" path="res://scripts/ui/upgrade_shop.gd" id="1_1"]
+
+[node name="UpgradeShop" type="CanvasLayer"]
+script = ExtResource("1_1")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+
+[node name="MainContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 60
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 60
+theme_override_constants/margin_bottom = 40
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MainContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "UPGRADE SHOP"
+
+[node name="Spacer" type="Control" parent="MainContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CreditsContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CreditsIcon" type="Label" parent="MainContainer/VBoxContainer/HeaderContainer/CreditsContainer"]
+layout_mode = 2
+text = "💎"
+
+[node name="CreditsLabel" type="Label" parent="MainContainer/VBoxContainer/HeaderContainer/CreditsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0"
+
+[node name="BackButton" type="Button" parent="MainContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Back [ESC]"
+
+[node name="ContentContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="ItemListPanel" type="PanelContainer" parent="MainContainer/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/VBoxContainer/ContentContainer/ItemListPanel"]
+layout_mode = 2
+
+[node name="ItemScrollContainer" type="ScrollContainer" parent="MainContainer/VBoxContainer/ContentContainer/ItemListPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ItemGrid" type="GridContainer" parent="MainContainer/VBoxContainer/ContentContainer/ItemListPanel/VBoxContainer/ItemScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="DetailPanel" type="PanelContainer" parent="MainContainer/VBoxContainer/ContentContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/VBoxContainer/ContentContainer/DetailPanel"]
+layout_mode = 2
+
+[node name="DetailItemName" type="Label" parent="MainContainer/VBoxContainer/ContentContainer/DetailPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Item Name"
+horizontal_alignment = 1
+
+[node name="DetailItemIcon" type="TextureRect" parent="MainContainer/VBoxContainer/ContentContainer/DetailPanel/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HSeparator" type="HSeparator" parent="MainContainer/VBoxContainer/ContentContainer/DetailPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="DetailDescription" type="Label" parent="MainContainer/VBoxContainer/ContentContainer/DetailPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Description"
+autowrap_mode = 3
+
+[node name="HSeparator2" type="HSeparator" parent="MainContainer/VBoxContainer/ContentContainer/DetailPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="DetailStats" type="Label" parent="MainContainer/VBoxContainer/ContentContainer/DetailPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Stats"
+autowrap_mode = 3
+
+[node name="Spacer" type="Control" parent="MainContainer/VBoxContainer/ContentContainer/DetailPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DetailUpgradeButton" type="Button" parent="MainContainer/VBoxContainer/ContentContainer/DetailPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Upgrade"
+
+[node name="EquipmentSlots" type="PanelContainer" parent="MainContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/VBoxContainer/EquipmentSlots"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainContainer/VBoxContainer/EquipmentSlots/VBoxContainer"]
+layout_mode = 2
+text = "Equipped Items:"
+
+[node name="EquippedItemsContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/EquipmentSlots/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_definition.gd" id="1_1"]
+
+[resource]
+script = ExtResource("1_1")
+item_name = "Crystal Magnet"
+description = "Magnetic field generator that attracts crystals from a greater distance."
+category = 2
+base_cost = 80
+cost_exponent = 1.15
+base_bonus = 0.2
+bonus_per_level = 0.05
+affected_stat = "collection_radius"

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_definition.gd" id="1_1"]
+
+[resource]
+script = ExtResource("1_1")
+item_name = "Energy Amplifier"
+description = "Enhances your shield systems with advanced capacitors, increasing maximum shield capacity."
+category = 0
+base_cost = 100
+cost_exponent = 1.15
+base_bonus = 0.1
+bonus_per_level = 0.02
+affected_stat = "max_shield"

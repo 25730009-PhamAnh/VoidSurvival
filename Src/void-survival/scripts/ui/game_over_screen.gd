@@ -91,9 +91,7 @@ func _on_retry_pressed() -> void:
 
 
 func _on_upgrades_pressed() -> void:
-	# TODO: Implement in Module 4 - Load upgrade shop scene
-	print("Upgrades button pressed - TODO: Implement upgrade shop scene")
-	push_warning("Upgrades shop not yet implemented (Module 4)")
+	get_tree().change_scene_to_file("res://scenes/ui/upgrade_shop.tscn")
 
 
 func _on_main_menu_pressed() -> void:

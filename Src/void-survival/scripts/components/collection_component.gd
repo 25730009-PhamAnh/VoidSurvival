@@ -11,7 +11,7 @@ signal item_collected(item: Node2D, value: int)
 		collection_radius = value
 		_update_collection_shape()
 
-@export var attraction_strength: float = 400.0
+@export var attraction_strength: float = 600.0
 @export var attraction_radius: float = 200.0:
 	set(value):
 		attraction_radius = value

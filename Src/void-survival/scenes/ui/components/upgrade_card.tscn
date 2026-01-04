@@ -1,0 +1,95 @@
+[gd_scene load_steps=2 format=3 uid="uid://c32fvr6b0ioow"]
+
+[ext_resource type="Script" path="res://scripts/ui/upgrade_card.gd" id="1_1"]
+
+[node name="UpgradeCard" type="PanelContainer"]
+custom_minimum_size = Vector2(220, 280)
+script = ExtResource("1_1")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ItemIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InfoContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemName" type="Label" parent="MarginContainer/VBoxContainer/Header/InfoContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Item Name"
+autowrap_mode = 2
+
+[node name="CategoryLabel" type="Label" parent="MarginContainer/VBoxContainer/Header/InfoContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"LabelSmall"
+text = "Category"
+
+[node name="LevelLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Level 0"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="CurrentBonusLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+20% Max Shield"
+horizontal_alignment = 1
+
+[node name="NextBonusLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+modulate = Color(0.7, 0.7, 0.7, 1)
+layout_mode = 2
+text = "→ +22%"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ActionArea" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CostLabel" type="Label" parent="MarginContainer/VBoxContainer/ActionArea"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Cost: 100"
+horizontal_alignment = 1
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ActionArea"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="UpgradeButton" type="Button" parent="MarginContainer/VBoxContainer/ActionArea/ButtonsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Purchase"
+
+[node name="EquipButton" type="Button" parent="MarginContainer/VBoxContainer/ActionArea/ButtonsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Equip"
