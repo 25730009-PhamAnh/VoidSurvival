@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b68xjk88su1f0"]
+[gd_scene load_steps=11 format=3 uid="uid://b68xjk88su1f0"]
 
 [ext_resource type="Script" uid="uid://bo6brq6t053vb" path="res://scripts/game_manager.gd" id="1_game_manager"]
 [ext_resource type="Script" uid="uid://b31w6uarw2ev4" path="res://scripts/spawner.gd" id="2_spawner"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://dpqb710l4toue" path="res://scripts/gameplay/spawners/enemy_spawner.gd" id="7_enemy_spawner"]
 [ext_resource type="Script" uid="uid://oo4a8njrhsbp" path="res://scripts/gameplay/spawners/black_hole_spawner.gd" id="8_black_hole_spawner"]
 [ext_resource type="PackedScene" uid="uid://dr5dg60e3oaq4" path="res://scenes/gameplay/hazards/black_hole.tscn" id="9_black_hole"]
+[ext_resource type="Script" path="res://scripts/gameplay/pickup_spawner.gd" id="10_pickup_spawner"]
 
 [node name="Game" type="Node2D"]
 
@@ -37,6 +38,9 @@ max_comets = 2
 [node name="BlackHoleSpawner" type="Node" parent="."]
 script = ExtResource("8_black_hole_spawner")
 black_hole_scene = ExtResource("9_black_hole")
+
+[node name="PickupSpawner" type="Node" parent="." groups=["pickup_spawner"]]
+script = ExtResource("10_pickup_spawner")
 
 [node name="Player" parent="." instance=ExtResource("4_player")]
 position = Vector2(640, 360)

@@ -80,7 +80,13 @@ func _update_attraction_shape() -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if body.is_in_group("pickups"):
+	# Type-safe polymorphic check (NEW)
+	if body is PickupBase:
+		var pickup = body as PickupBase
+		var value = pickup.get_value()
+		item_collected.emit(pickup, int(value))
+	# Backward compatibility during migration (OLD)
+	elif body.is_in_group("pickups"):
 		var value = body.get("crystal_value") if body.has_method("get") else 1
 		item_collected.emit(body, value)
 

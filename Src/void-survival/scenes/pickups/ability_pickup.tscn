@@ -1,35 +1,33 @@
-[gd_scene load_steps=7 format=3 uid="uid://bsm3ql7y4kl8r"]
+[gd_scene load_steps=6 format=3 uid="uid://dqa2yq408lm5t"]
 
-[ext_resource type="Script" path="res://scripts/pickups/crystal_pickup.gd" id="1_crystal"]
-[ext_resource type="Resource" path="res://resources/pickups/crystal.tres" id="2_crystal_definition"]
+[ext_resource type="Script" path="res://scripts/pickups/ability_pickup.gd" id="1_ability_pickup"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_crystal"]
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ability"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_crystal"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_ability"]
 radius = 8.0
 
 [sub_resource type="Gradient" id="Gradient_particles"]
 offsets = PackedFloat32Array(0, 0.5, 1)
-colors = PackedColorArray(0, 1, 1, 1, 0.5, 0.8, 1, 0.8, 0, 0.5, 1, 0)
+colors = PackedColorArray(0.5, 0, 1, 1, 0.5, 0.5, 1, 0.8, 0.5, 0, 0.5, 0)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_particles"]
 gradient = SubResource("Gradient_particles")
 
-[node name="Crystal" type="RigidBody2D" groups=["pickups"]]
+[node name="AbilityPickup" type="RigidBody2D" groups=["pickups"]]
 collision_layer = 256
 collision_mask = 0
 gravity_scale = 0.0
 linear_damp = 2.0
-script = ExtResource("1_crystal")
-pickup_definition = ExtResource("2_crystal_definition")
+script = ExtResource("1_ability_pickup")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0, 1, 1, 1)
+modulate = Color(0.5, 0, 1, 1)
 scale = Vector2(16, 16)
-texture = SubResource("PlaceholderTexture2D_crystal")
+texture = SubResource("PlaceholderTexture2D_ability")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_crystal")
+shape = SubResource("CircleShape2D_ability")
 
 [node name="CollectionParticles" type="CPUParticles2D" parent="."]
 visible = false
@@ -47,6 +45,6 @@ initial_velocity_min = 50.0
 initial_velocity_max = 100.0
 scale_amount_min = 2.0
 scale_amount_max = 4.0
-color = Color(0, 1, 1, 1)
+color = Color(0.5, 0, 1, 1)
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]

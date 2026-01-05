@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="PickupDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/pickup_definition.gd" id="1_pickup_definition"]
+
+[resource]
+script = ExtResource("1_pickup_definition")
+pickup_name = "Health Orb"
+pickup_type = 1
+description = "Restores health/shield when collected."
+color = Color(0, 1, 0, 1)
+rotation_speed = 3.0
+float_amplitude = 7.0
+float_speed = 4.0
+base_value = 20.0
+duration = 0.0
+stack_behavior = false
+spawn_weight = 0.3

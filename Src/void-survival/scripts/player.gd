@@ -146,7 +146,13 @@ func _on_health_component_died() -> void:
 
 
 func _on_item_collected(item: Node2D, value: int) -> void:
-	if item.has_signal("collected"):
+	# Polymorphic dispatch (NEW) - each pickup applies its own effect
+	if item is PickupBase:
+		var pickup = item as PickupBase
+		pickup.apply_effect(self)  # Polymorphism!
+		pickup.on_collected()  # Triggers VFX and cleanup
+	# Backward compatibility for old Crystal class (OLD)
+	elif item.has_signal("collected"):
 		item.collected.emit(value)
-	ResourceManager.add_crystals(value)
-	SessionManager.record_crystal_collected(value)
+		ResourceManager.add_crystals(value)
+		SessionManager.record_crystal_collected(value)

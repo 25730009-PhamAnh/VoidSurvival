@@ -146,18 +146,11 @@ func _on_enemy_destroyed(score: int, crystals: int, position: Vector2, type: Ene
 	SessionManager.record_enemy_destroyed()
 
 func _spawn_crystals(count: int, position: Vector2) -> void:
-	var crystal_scene = load("res://scenes/prototype/crystal.tscn")
-	if not crystal_scene:
-		push_warning("Crystal scene not found, adding crystals directly")
+	# Use centralized spawner (NEW)
+	var spawner = get_tree().get_first_node_in_group("pickup_spawner")
+	if spawner and spawner.has_method("spawn_pickups"):
+		spawner.spawn_pickups(count, position, PickupDefinition.PickupType.CRYSTAL, 30.0)
+	else:
+		# Fallback: add directly if spawner not available (OLD)
+		push_warning("PickupSpawner not found, adding crystals directly to ResourceManager")
 		ResourceManager.add_crystals(count)
-		return
-
-	for i in count:
-		var crystal = crystal_scene.instantiate()
-
-		# Spawn in circle around position
-		var angle = (TAU / count) * i
-		var offset = Vector2(30, 0).rotated(angle)
-		crystal.global_position = position + offset
-
-		get_tree().current_scene.add_child(crystal)

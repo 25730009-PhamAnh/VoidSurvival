@@ -6,7 +6,6 @@ signal destroyed(score_value: int)
 enum Size {LARGE, MEDIUM, SMALL}
 
 @export var size: Size = Size.LARGE
-@export var crystal_scene: PackedScene
 
 var collision_damage: float
 var score_value: int
@@ -85,22 +84,18 @@ func _split() -> void:
 
 
 func _spawn_crystals() -> void:
-	if not crystal_scene:
-		return
-
 	var crystal_count = 0
 	match size:
 		Size.LARGE: crystal_count = randi_range(3, 5)
 		Size.MEDIUM: crystal_count = randi_range(2, 3)
 		Size.SMALL: crystal_count = 1
 
-	for i in crystal_count:
-		var crystal = crystal_scene.instantiate()
-		crystal.global_position = global_position + Vector2(
-			randf_range(-15, 15),
-			randf_range(-15, 15)
-		)
-		get_parent().call_deferred("add_child", crystal)
+	# Use centralized spawner
+	var spawner = get_tree().get_first_node_in_group("pickup_spawner")
+	if spawner and spawner.has_method("spawn_pickups"):
+		spawner.spawn_pickups(crystal_count, global_position, PickupDefinition.PickupType.CRYSTAL, 15.0)
+	else:
+		push_warning("Asteroid: PickupSpawner not found in scene tree")
 
 
 func _on_body_entered(_body: Node) -> void:

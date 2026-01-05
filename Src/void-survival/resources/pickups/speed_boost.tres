@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="PickupDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/pickup_definition.gd" id="1_pickup_definition"]
+
+[resource]
+script = ExtResource("1_pickup_definition")
+pickup_name = "Speed Boost"
+pickup_type = 2
+description = "Temporarily increases movement speed."
+color = Color(1, 1, 0, 1)
+rotation_speed = 4.0
+float_amplitude = 8.0
+float_speed = 5.0
+base_value = 1.5
+duration = 5.0
+stack_behavior = false
+spawn_weight = 0.2

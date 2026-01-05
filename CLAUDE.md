@@ -8,8 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Void Survival** is a space shooter game built with **Godot 4.5** where players control a spaceship, destroy asteroids, and survive as long as possible.
 
-**Current Status**: Phase 2 Content Expansion - In Progress (Modules 1-6 done)
-**Next Module**: Module 7 - Black Hole Hazard System
+**Current Status**: Phase 2 Content Expansion - Module 7 In Progress (Black Hole system partially implemented)
+**Next Tasks**: Complete Module 7 - Black Hole Hazard System testing & polish
 **Target Platforms**: Mobile (iOS/Android), PC
 
 ### Documentation Structure
@@ -44,15 +44,22 @@ All design and planning documentation is in `Documents/`:
 Src/void-survival/
 ├── scenes/
 │   ├── prototype/              # Core gameplay (game.tscn, player.tscn, asteroid.tscn)
-│   ├── gameplay/hazards/       # Enemy scenes (enemy_ufo.tscn, enemy_comet.tscn)
+│   ├── gameplay/hazards/       # Hazard scenes (enemy_ufo, enemy_comet, black_hole)
+│   ├── components/             # Reusable component scenes
+│   ├── pickups/                # Crystal and other collectibles
 │   └── ui/                     # HUD, game over, upgrade shop + components
 ├── scripts/
 │   ├── autoload/               # ResourceManager, SaveSystem, SessionManager, UpgradeSystem
-│   ├── resources/              # ItemDefinition, EnemyDefinition Resource classes
-│   └── gameplay/spawners/      # EnemySpawner system
+│   ├── components/             # Reusable components (health, movement, gravitational, kill_zone, collection)
+│   ├── resources/              # ItemDefinition, EnemyDefinition custom Resource classes
+│   ├── gameplay/spawners/      # EnemySpawner, BlackHoleSpawner systems
+│   ├── pickups/                # Crystal and pickup scripts
+│   └── ui/                     # UI component scripts
 └── resources/
     ├── items/                  # .tres files (defensive/, offensive/, utility/)
-    └── enemies/                # .tres files (ufo_data, comet_data)
+    ├── enemies/                # .tres files (ufo_data, comet_data)
+    ├── ship_parameters/        # Player ship stats
+    └── config/                 # Game configuration resources
 ```
 
 ---
@@ -101,6 +108,15 @@ Defined in `project.godot`:
 
 **Note**: Zero gravity (`2d/default_gravity=0.0`) and no linear damping for space physics.
 
+### Component System
+
+**Reusable Components** (composition-based architecture):
+- **HealthComponent**: Health tracking with damage/death signals
+- **MovementComponent**: Customizable movement patterns (sinusoidal, drift, charge)
+- **CollectionComponent**: Attracts and collects pickups (crystals) in range
+- **GravitationalComponent**: Applies gravitational pull to nearby physics bodies
+- **KillZoneComponent**: Destroys objects that enter center area (used by black holes)
+
 ### Enemy System (Module 6)
 
 **Enemy Types**:
@@ -125,6 +141,25 @@ Enemy destroyed → destroyed(score, crystals, position) → GameManager.add_sco
 Enemy damaged → damaged signal (for future VFX)
 ```
 
+### Black Hole Hazard System (Module 7 - In Progress)
+
+**Black Hole Mechanics**:
+- Spawns periodically in safe zones (away from player)
+- Applies gravitational pull to ALL physics objects (player, asteroids, enemies, projectiles)
+- Center kill zone destroys anything that reaches it
+- Can be "overloaded" and destroyed by absorbing enough mass
+
+**Components Used**:
+- **GravitationalComponent**: Pulls objects toward center with inverse-square force
+- **KillZoneComponent**: Destroys objects in center area
+- Dedicated black_hole.gd script manages lifecycle, visual effects, and mass tracking
+
+**BlackHoleSpawner**: Manages black hole spawning
+- Time-based spawning with difficulty scaling
+- Position safety checks (minimum distance from player)
+- Max active black holes limit
+- Coordinates with GameManager for hazard lifecycle
+
 ### Progression & Persistence
 
 **Meta-progression**: Crystals (session) → Credits (permanent) → Purchase/upgrade items → Equip 4 slots
@@ -139,11 +174,17 @@ Enemy damaged → damaged signal (for future VFX)
 
 **Adding items**: Create `.tres` in `resources/items/{category}/`, shop auto-loads (no code changes)
 
-**Autoloads**: ResourceManager → SaveSystem → SessionManager → UpgradeSystem
+**Adding enemies**: Create `.tres` EnemyDefinition in `resources/enemies/`, reference enemy scene, spawner auto-configures
+
+**Component-based design**: Attach components (Health, Movement, Gravitational, etc.) to scenes for reusable behavior
+
+**Autoload order**: ResourceManager → SaveSystem → SessionManager → UpgradeSystem
 
 **Scene flow**: `game.tscn` → `game_over_screen.tscn` → `upgrade_shop.tscn` → back to game
 
-**Groups**: `"player"`, `"game_manager"` - use `get_tree().get_first_node_in_group("player")`
+**Groups**: `"player"`, `"game_manager"`, `"enemies"` - use `get_tree().get_first_node_in_group("player")`
+
+**Spawner pattern**: GameManager coordinates spawners (asteroids, enemies, black holes) via child nodes
 
 ---
 
@@ -307,10 +348,27 @@ You are an expert in **Godot 4** and **GDScript**, and you strictly follow **God
 - Module 5: Stat calculation system (items modify player stats in real-time)
 - Module 6: Enemy Variety & Spawning (UFO + Comet enemies with data-driven system)
 
-**🚧 Next**: Module 7 - Black Hole Hazard System
+**🚧 In Progress**: Module 7 - Black Hole Hazard System (GravitationalComponent, KillZoneComponent, and BlackHole scene implemented)
 
-**📋 Remaining**: Modules 7-12 (black holes, difficulty, weapons, VFX, menus, hyperspace)
+**📋 Remaining**: Modules 8-12 (difficulty scaling, weapons, VFX, menus, hyperspace)
 
 **Core Progression Loop**: Fully functional - Play → Earn Crystals → Buy/Upgrade Items → Equip Items → Stats Increase → Play Better
 
 See `Documents/Development_Plan_Overview.md` and `Documents/modules/` for details.
+
+---
+
+## Testing & Debugging
+
+**Run Game**: Open `Src/void-survival/project.godot` in Godot 4.5+ and press F5
+
+**Check Save Data**: Save file location is `user://savegame.json`
+- On macOS: `~/Library/Application Support/Godot/app_userdata/Void Survival/`
+- On Windows: `%APPDATA%\Godot\app_userdata\Void Survival\`
+- On Linux: `~/.local/share/godot/app_userdata/Void Survival/`
+
+**Debug Signals**: Use `print()` or connect to signals in editor for visibility
+
+**Test Components**: Components are reusable - test by attaching to test scenes
+
+**Physics Debugging**: Enable "Visible Collision Shapes" in Debug menu to see collision areas
