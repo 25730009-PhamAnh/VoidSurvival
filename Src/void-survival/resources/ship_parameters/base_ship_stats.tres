@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="ShipStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/ship_stats.gd" id="1_1"]
+
+[resource]
+script = ExtResource("1_1")
+base_max_shield = 100.0
+shield_per_level = 20.0
+base_shield_regen = 5.0
+shield_regen_per_level = 0.5
+base_shield_delay = 3.0
+shield_delay_reduction = 0.1
+min_shield_delay = 0.5
+base_move_speed = 300.0
+move_speed_per_level = 5.0
+base_acceleration = 200.0
+accel_per_level = 5.0
+base_fire_rate = 2.0
+fire_rate_per_level = 0.1
+base_damage = 10.0
+damage_multiplier_per_level = 0.15
+base_projectile_speed = 400.0
+projectile_speed_per_level = 10.0
+base_collection_radius = 50.0
+collection_radius_per_level = 5.0
+base_luck = 1.0
+luck_per_level = 0.1

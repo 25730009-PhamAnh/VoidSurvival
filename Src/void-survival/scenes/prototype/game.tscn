@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://b68xjk88su1f0"]
+[gd_scene load_steps=7 format=3 uid="uid://b68xjk88su1f0"]
 
 [ext_resource type="Script" uid="uid://bo6brq6t053vb" path="res://scripts/game_manager.gd" id="1_game_manager"]
 [ext_resource type="Script" uid="uid://b31w6uarw2ev4" path="res://scripts/spawner.gd" id="2_spawner"]
 [ext_resource type="PackedScene" uid="uid://cj4kw8h5p2m1x" path="res://scenes/prototype/asteroid.tscn" id="3_asteroid"]
 [ext_resource type="PackedScene" uid="uid://d1n5x7q8p4w2v" path="res://scenes/prototype/player.tscn" id="4_player"]
 [ext_resource type="PackedScene" uid="uid://b7m3lax2h5w1v" path="res://scenes/ui/prototype_hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" uid="uid://ckj8v7qw4qm7n" path="res://scenes/ui/debug_stats_panel.tscn" id="6_debug"]
 
 [node name="Game" type="Node2D"]
 
@@ -28,3 +29,5 @@ asteroid_scene = ExtResource("3_asteroid")
 position = Vector2(640, 360)
 
 [node name="HUD" parent="." instance=ExtResource("5_hud")]
+
+[node name="DebugStatsPanel" parent="." instance=ExtResource("6_debug")]

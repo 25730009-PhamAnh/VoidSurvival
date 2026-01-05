@@ -4,15 +4,19 @@ extends CharacterBody2D
 signal died
 signal shield_changed(current: float, maximum: float)
 
-const ACCELERATION = 200.0
-const MAX_SPEED = 300.0
 const ROTATION_SPEED = 3.0
-const FIRE_RATE = 0.5  # seconds between shots
 const INVINCIBILITY_TIME = 1.0  # seconds of invincibility after taking damage
 const BOUNCE_FORCE = 100.0  # knockback force when hitting asteroid
 
 @export var projectile_scene: PackedScene
-@export var max_shield: float = 100.0
+
+# Stats (set from UpgradeSystem)
+var max_shield: float = 100.0
+var max_speed: float = 300.0
+var acceleration: float = 200.0
+var fire_rate: float = 2.0  # shots per second
+var projectile_damage: float = 10.0
+var projectile_speed: float = 400.0
 
 var current_shield: float
 var _fire_timer: float = 0.0
@@ -22,9 +26,35 @@ var _invincibility_timer: float = 0.0
 @onready var collection_component: Area2D = $CollectionComponent
 
 func _ready() -> void:
+	# Connect to stat updates
+	UpgradeSystem.stats_updated.connect(_on_stats_updated)
+
+	# Apply initial stats
+	_apply_stats(UpgradeSystem.get_final_stats())
+
+	# Initialize shield
 	current_shield = max_shield
 	shield_changed.emit(current_shield, max_shield)
+
+	# Connect collection
 	collection_component.item_collected.connect(_on_item_collected)
+
+
+func _on_stats_updated() -> void:
+	_apply_stats(UpgradeSystem.get_final_stats())
+
+
+func _apply_stats(stats: Dictionary) -> void:
+	max_shield = stats.max_shield
+	max_speed = stats.move_speed
+	acceleration = stats.acceleration
+	fire_rate = stats.fire_rate
+	projectile_damage = stats.damage
+	projectile_speed = stats.projectile_speed
+
+	# Update collection radius
+	if collection_component and collection_component.has_method("set_radius"):
+		collection_component.set_radius(stats.collection_radius)
 
 func _physics_process(delta: float) -> void:
 	_handle_input(delta)
@@ -39,8 +69,8 @@ func _handle_input(delta: float) -> void:
 	# Thrust
 	if Input.is_action_pressed("thrust_forward"):
 		var direction = Vector2.UP.rotated(rotation)
-		velocity += direction * ACCELERATION * delta
-		velocity = velocity.limit_length(MAX_SPEED)
+		velocity += direction * acceleration * delta
+		velocity = velocity.limit_length(max_speed)
 
 	# Auto-fire
 	if _fire_timer > 0:
@@ -76,12 +106,19 @@ func _fire() -> void:
 		push_error("Player: projectile_scene not set!")
 		return
 
-	_fire_timer = FIRE_RATE
+	_fire_timer = 1.0 / fire_rate  # Convert shots-per-second to delay
 	SessionManager.record_shot_fired()
 
 	var projectile = projectile_scene.instantiate()
 	projectile.global_position = shoot_point.global_position
 	projectile.global_rotation = global_rotation
+
+	# Apply stats to projectile
+	if projectile.has_method("set_damage"):
+		projectile.set_damage(projectile_damage)
+	if projectile.has_method("set_speed"):
+		projectile.set_speed(projectile_speed)
+
 	get_parent().add_child(projectile)
 
 func _wrap_around_screen() -> void:

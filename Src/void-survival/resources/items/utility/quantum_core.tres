@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_definition.gd" id="1_1"]
+
+[resource]
+script = ExtResource("1_1")
+item_name = "Quantum Core"
+description = "Experimental reactor boosts all ship systems simultaneously."
+category = 2
+base_cost = 500
+cost_exponent = 1.3
+base_bonus = 0.05
+bonus_per_level = 0.01
+affected_stats = Array[String](["max_shield", "fire_rate", "move_speed"])
+scaling_type = 0

@@ -4,12 +4,12 @@
 
 [resource]
 script = ExtResource("1_1")
-item_name = "Rapid Fire Module"
-description = "Advanced targeting computer that significantly increases your weapon's fire rate."
-category = 1
-base_cost = 150
-cost_exponent = 1.15
+item_name = "Reactive Armor"
+description = "Adaptive plating that reduces shield regeneration delay after damage."
+category = 0
+base_cost = 200
+cost_exponent = 1.2
 base_bonus = 0.15
 bonus_per_level = 0.03
-affected_stats = Array[String](["fire_rate"])
+affected_stats = Array[String](["shield_delay"])
 scaling_type = 0

@@ -8,8 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Void Survival** is a space shooter game built with **Godot 4.5** where players control a spaceship, destroy asteroids, and survive as long as possible.
 
-**Current Status**: Week 1 Prototype ✅ Complete
-**Next Phase**: Phase 1 Foundation (Modules 1-5) - Resource system, save/load, credit economy, upgrade shop
+**Current Status**: Phase 1 Foundation - Complete! (Modules 1-5 done)
+**Next Module**: Module 6 - Enemy Variety & Challenge Escalation
 **Target Platforms**: Mobile (iOS/Android), PC
 
 ### Documentation Structure
@@ -22,7 +22,7 @@ All design and planning documentation is in `Documents/`:
   - Phase 1 (High Priority): Modules 1-5 (Resource system, save/load, credits, shop, stats)
   - Phase 2 (Medium Priority): Modules 6-8 (Enemy variety, black holes, difficulty)
   - Phase 3 (Low-Medium Priority): Modules 9-12 (Weapons, VFX, menu, hyperspace)
-- **[Archive](Documents/archive/)**: Completed plans including the prototype plan
+- **[Archive](Documents/archive/)**: Completed plans (prototype, modules 1-5)
 
 ### Key Architecture Principles
 
@@ -42,21 +42,11 @@ All design and planning documentation is in `Documents/`:
 
 ```
 Src/void-survival/
-├── scenes/
-│   ├── prototype/          # Core gameplay scenes
-│   │   ├── game.tscn       # Main game scene (entry point)
-│   │   ├── player.tscn     # Player ship
-│   │   ├── asteroid.tscn   # Asteroid enemy
-│   │   └── projectile.tscn # Player bullet
-│   └── ui/
-│       └── prototype_hud.tscn  # HUD overlay
-└── scripts/                # GDScript files matching scenes
-    ├── game_manager.gd
-    ├── player.gd
-    ├── asteroid.gd
-    ├── projectile.gd
-    ├── spawner.gd
-    └── prototype_hud.gd
+├── scenes/prototype/       # Core gameplay (game.tscn, player.tscn, asteroid.tscn)
+├── scenes/ui/             # HUD, game over, upgrade shop + components
+├── scripts/autoload/      # ResourceManager, SaveSystem, SessionManager, UpgradeSystem
+├── scripts/resources/     # ItemDefinition custom Resource class
+└── resources/items/       # .tres files (defensive/, offensive/, utility/)
 ```
 
 ---
@@ -65,53 +55,26 @@ Src/void-survival/
 
 ### Core Systems
 
-This game uses a **signal-based event system** for decoupled communication between gameplay systems:
+**Signal-based architecture** with decoupled communication:
 
-1. **GameManager** (`game_manager.gd`)
-   - Central coordinator for game state and score tracking
-   - Listens to player death and asteroid destruction events
-   - Uses `get_tree().node_added` to auto-connect to dynamically spawned asteroids
-   - Handles game restart via input action "restart"
+**Autoload Singletons**:
+- **ResourceManager**: Crystals (session) + credits (persistent), emits `crystals_changed`/`credits_changed`
+- **SaveSystem**: JSON persistence to `user://savegame.json`, auto-saves on game over
+- **SessionManager**: Tracks stats (time, kills, accuracy), calculates credit bonuses
+- **UpgradeSystem**: Manages `equipped_items` array, `item_levels` dict, 4 slots default
 
-2. **Player** (`player.gd`)
-   - `CharacterBody2D` with custom movement physics (thrust + rotation)
-   - Emits `died` signal when shield reaches zero
-   - Emits `shield_changed(current, maximum)` signal for UI updates
-   - Instantiates projectiles at `ShootPoint` Marker2D with fire rate limiting
+**Gameplay**: Player (CharacterBody2D) → shoots Projectiles → destroys Asteroids (RigidBody2D, splits 3→2→1) → spawns Crystals → CollectionComponent attracts → ResourceManager tracks
 
-3. **Spawner** (`spawner.gd`)
-   - Spawns asteroids at random screen edges with velocity toward center
-   - Tracks active asteroid count to enforce `max_asteroids` limit
-   - Decrements count when asteroids are destroyed via signal connection
+**UI**: HUD (in-game) → GameOverScreen (stats) → UpgradeShop (loads items from dirs) → UpgradeCard (per-item)
 
-4. **Asteroid** (`asteroid.gd`)
-   - `RigidBody2D` with three sizes: LARGE, MEDIUM, SMALL
-   - Emits `destroyed(score_value)` signal before queue_free()
-   - Splits into smaller asteroids when destroyed (3 for LARGE, 2 for MEDIUM)
-   - Uses `duplicate()` for spawning split pieces
-   - Screen wrapping handled in `_physics_process`
+**Resources**: ItemDefinition custom Resource class, stored as `.tres` in `resources/items/{category}/`
 
-5. **Projectile** (`projectile.gd`)
-   - `Area2D` with linear velocity
-   - Auto-destroys when leaving screen via `VisibleOnScreenNotifier2D`
-   - Deals damage to asteroids on collision then queue_free()
-
-6. **HUD** (`prototype_hud.gd`)
-   - `CanvasLayer` for screen-space UI
-   - Finds player and game_manager via groups on `_ready()`
-   - Connects to signals for reactive UI updates
-   - Uses unique name references (`%ShieldBar`, `%ScoreLabel`) for node access
-
-### Signal Flow
+### Key Signal Flows
 
 ```
-Asteroid destroyed → GameManager.add_score() → score_updated → HUD updates score label
-                  → Spawner._on_asteroid_destroyed() → decrements active count
-
-Player hit → Player.take_damage() → shield_changed → HUD updates shield bar
-          → (if dead) died → GameManager._on_player_died() → game_over
-
-Projectile hits asteroid → Asteroid.take_damage() → destroyed signal → (see above)
+Asteroid destroyed → destroyed signal → GameManager + Spawner → spawns Crystal
+Player dies → died signal → SessionManager.end_session() → GameOverScreen
+Shop upgrade → UpgradeSystem.upgrade_item() → credits_changed + item_upgraded → auto-save
 ```
 
 ### Input Actions
@@ -122,6 +85,7 @@ Defined in `project.godot`:
 - `rotate_right`: D key - Rotate clockwise
 - `fire`: SPACE - Shoot projectile
 - `restart`: R key - Restart game after death
+- `ui_cancel`: ESC - Back button in menus (default Godot action)
 
 ### Physics Layers
 
@@ -130,6 +94,26 @@ Defined in `project.godot`:
 4. **Layer 4**: Projectiles
 
 **Note**: Zero gravity (`2d/default_gravity=0.0`) and no linear damping for space physics.
+
+### Progression & Persistence
+
+**Meta-progression**: Crystals (session) → Credits (permanent) → Purchase/upgrade items → Equip 4 slots
+
+**Save data** (`user://savegame.json`): `total_credits`, `item_levels` (path→level), `equipped_items` (paths), `unlocked_slots`, `stats`
+
+**Item cost**: `base_cost * pow(cost_scaling, level)` | **Credits**: Crystals 1:1 + time/combat/accuracy bonuses
+
+---
+
+## Development Patterns
+
+**Adding items**: Create `.tres` in `resources/items/{category}/`, shop auto-loads (no code changes)
+
+**Autoloads**: ResourceManager → SaveSystem → SessionManager → UpgradeSystem
+
+**Scene flow**: `game.tscn` → `game_over_screen.tscn` → `upgrade_shop.tscn` → back to game
+
+**Groups**: `"player"`, `"game_manager"` - use `get_tree().get_first_node_in_group("player")`
 
 ---
 
@@ -279,5 +263,23 @@ You are an expert in **Godot 4** and **GDScript**, and you strictly follow **God
 2. **Keep scripts small and focused**: one responsibility per script/node whenever feasible.
 3. **Use Resources and exports** for clean, editor-friendly data and configuration.
 4. **Favor composition and signals over inheritance and globals** to keep systems decoupled.
-5. **Optimize by disabling what you don’t need**: avoid unnecessary processing, physics, and allocations.
+5. **Optimize by disabling what you don't need**: avoid unnecessary processing, physics, and allocations.
 6. **Leverage the editor**: make everything as configurable and visual as possible for faster iteration.
+
+---
+
+## Current Status
+
+**✅ Complete**: Phase 1 Foundation (Modules 1-5)
+- Module 1-2: Resource system (crystals, credits) + Save/Load
+- Module 3: Credit economy & post-game flow
+- Module 4: Shop UI with equip/upgrade
+- Module 5: Stat calculation system (items modify player stats in real-time)
+
+**🚧 Next**: Module 6 - Enemy Variety & Challenge Escalation
+
+**📋 Remaining**: Modules 6-12 (enemies, hazards, difficulty, weapons, VFX, menus)
+
+**Core Progression Loop**: Fully functional - Play → Earn Crystals → Buy/Upgrade Items → Equip Items → Stats Increase → Play Better
+
+See `Documents/Development_Plan_Overview.md` and `Documents/modules/` for details.

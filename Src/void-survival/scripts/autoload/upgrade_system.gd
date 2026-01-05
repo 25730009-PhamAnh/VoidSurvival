@@ -6,13 +6,23 @@ signal item_unequipped(item: ItemDefinition)
 signal item_upgraded(item: ItemDefinition, new_level: int)
 signal stats_updated()
 
+# Resources
+var ship_stats_resource: ShipStats
+
 # State
 var equipped_items: Array[ItemDefinition] = []
 var item_levels: Dictionary = {}  # resource_path -> level
 var unlocked_slots: int = 4
+var point_levels: Dictionary = {}  # For future point allocation system (defense, offense, mobility, utility)
 
 
 func _ready() -> void:
+	# Load the ship stats resource
+	if not ship_stats_resource:
+		ship_stats_resource = load("res://resources/ship_parameters/base_ship_stats.tres")
+		if not ship_stats_resource:
+			push_error("UpgradeSystem: Failed to load base_ship_stats.tres")
+
 	_load_from_save()
 
 
@@ -97,6 +107,26 @@ func is_item_equipped(item: ItemDefinition) -> bool:
 	if not item:
 		return false
 	return item in equipped_items
+
+
+## Calculate final ship stats from base + equipped item bonuses
+## @return: Dictionary of final stats with all bonuses applied
+func get_final_stats() -> Dictionary:
+	if not ship_stats_resource:
+		push_error("UpgradeSystem: ship_stats_resource not loaded!")
+		return {}
+
+	# Start with base stats (currently all point_levels are 0)
+	var stats = ship_stats_resource.calculate_stats(point_levels)
+
+	# Apply bonuses from equipped items
+	for item in equipped_items:
+		if not item:
+			continue
+		var level = get_item_level(item)
+		item.apply_to_stats(stats, level)
+
+	return stats
 
 
 func _load_from_save() -> void:

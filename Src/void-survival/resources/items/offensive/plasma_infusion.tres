@@ -4,12 +4,12 @@
 
 [resource]
 script = ExtResource("1_1")
-item_name = "Rapid Fire Module"
-description = "Advanced targeting computer that significantly increases your weapon's fire rate."
+item_name = "Plasma Infusion"
+description = "Superheats projectiles with plasma energy, increasing damage output."
 category = 1
-base_cost = 150
-cost_exponent = 1.15
+base_cost = 180
+cost_exponent = 1.16
 base_bonus = 0.15
 bonus_per_level = 0.03
-affected_stats = Array[String](["fire_rate"])
+affected_stats = Array[String](["damage"])
 scaling_type = 0

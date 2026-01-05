@@ -93,3 +93,8 @@ func _on_attraction_area_body_entered(_body: Node2D) -> void:
 func _on_attraction_area_body_exited(_body: Node2D) -> void:
 	# Bodies leaving attraction radius are removed automatically from get_overlapping_bodies()
 	pass
+
+
+## Set collection radius (called by stat system)
+func set_radius(new_radius: float) -> void:
+	collection_radius = new_radius

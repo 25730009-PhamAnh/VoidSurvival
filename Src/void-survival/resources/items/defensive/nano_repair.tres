@@ -4,12 +4,12 @@
 
 [resource]
 script = ExtResource("1_1")
-item_name = "Crystal Magnet"
-description = "Magnetic field generator that attracts crystals from a greater distance."
-category = 2
-base_cost = 80
-cost_exponent = 1.15
+item_name = "Nano Repair System"
+description = "Microscopic repair drones continuously restore your shield integrity."
+category = 0
+base_cost = 150
+cost_exponent = 1.18
 base_bonus = 0.2
-bonus_per_level = 0.05
-affected_stats = Array[String](["collection_radius"])
+bonus_per_level = 0.04
+affected_stats = Array[String](["shield_regen"])
 scaling_type = 0

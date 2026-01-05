@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_definition.gd" id="1_1"]
+
+[resource]
+script = ExtResource("1_1")
+item_name = "Kinetic Accelerator"
+description = "Electromagnetic rails propel projectiles at extreme velocities."
+category = 1
+base_cost = 120
+cost_exponent = 1.14
+base_bonus = 0.12
+bonus_per_level = 0.02
+affected_stats = Array[String](["projectile_speed"])
+scaling_type = 0
