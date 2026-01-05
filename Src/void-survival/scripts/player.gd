@@ -126,6 +126,15 @@ func take_damage(amount: float) -> void:
 	if health_component:
 		health_component.take_damage(amount)
 
+
+## Called by external systems (like GravitationalComponent) to apply forces
+func apply_external_force(force: Vector2) -> void:
+	# CharacterBody2D doesn't have apply_force() like RigidBody2D
+	# Apply force as velocity modification
+	# This allows gravitational pull while maintaining player control
+	velocity += force
+
+
 # Signal forwarding for HUD compatibility
 func _on_health_component_shield_changed(current: float, maximum: float) -> void:
 	shield_changed.emit(current, maximum)

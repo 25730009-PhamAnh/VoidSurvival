@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b68xjk88su1f0"]
+[gd_scene load_steps=10 format=3 uid="uid://b68xjk88su1f0"]
 
 [ext_resource type="Script" uid="uid://bo6brq6t053vb" path="res://scripts/game_manager.gd" id="1_game_manager"]
 [ext_resource type="Script" uid="uid://b31w6uarw2ev4" path="res://scripts/spawner.gd" id="2_spawner"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://b7m3lax2h5w1v" path="res://scenes/ui/prototype_hud.tscn" id="5_hud"]
 [ext_resource type="PackedScene" uid="uid://dn88yxwndfr0t" path="res://scenes/ui/debug_stats_panel.tscn" id="6_debug"]
 [ext_resource type="Script" uid="uid://dpqb710l4toue" path="res://scripts/gameplay/spawners/enemy_spawner.gd" id="7_enemy_spawner"]
+[ext_resource type="Script" uid="uid://oo4a8njrhsbp" path="res://scripts/gameplay/spawners/black_hole_spawner.gd" id="8_black_hole_spawner"]
+[ext_resource type="PackedScene" uid="uid://dr5dg60e3oaq4" path="res://scenes/gameplay/hazards/black_hole.tscn" id="9_black_hole"]
 
 [node name="Game" type="Node2D"]
 
@@ -29,6 +31,12 @@ max_asteroids = 5
 
 [node name="EnemySpawner" type="Node" parent="."]
 script = ExtResource("7_enemy_spawner")
+max_ufos = 1
+max_comets = 2
+
+[node name="BlackHoleSpawner" type="Node" parent="."]
+script = ExtResource("8_black_hole_spawner")
+black_hole_scene = ExtResource("9_black_hole")
 
 [node name="Player" parent="." instance=ExtResource("4_player")]
 position = Vector2(640, 360)
@@ -36,3 +44,7 @@ position = Vector2(640, 360)
 [node name="HUD" parent="." instance=ExtResource("5_hud")]
 
 [node name="DebugStatsPanel" parent="." instance=ExtResource("6_debug")]
+
+[node name="BlackHole" parent="." instance=ExtResource("9_black_hole")]
+position = Vector2(278, 323)
+pull_strength_growth = 100.0

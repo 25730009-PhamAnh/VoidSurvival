@@ -108,6 +108,10 @@ func take_damage(amount: float) -> void:
 	if health_component:
 		health_component.take_damage(amount)
 
+func apply_external_force(force: Vector2) -> void:
+	"""Apply external forces like gravity to the UFO's velocity"""
+	velocity += force
+
 func _on_health_component_damaged(amount: float) -> void:
 	"""Forward component signal to maintain VFX compatibility"""
 	damaged.emit(int(amount))

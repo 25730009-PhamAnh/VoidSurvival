@@ -6,6 +6,7 @@ var damage: float = 10.0
 var velocity: Vector2
 
 func _ready() -> void:
+	add_to_group("projectile")
 	velocity = Vector2.UP.rotated(global_rotation) * speed
 	body_entered.connect(_on_body_entered)
 	$VisibleOnScreenNotifier2D.screen_exited.connect(_on_screen_exited)
