@@ -1,10 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://dr5dg60e3oaq4"]
+[gd_scene load_steps=8 format=3 uid="uid://dr5dg60e3oaq4"]
 
 [ext_resource type="Script" uid="uid://c4on3ns4rc4nx" path="res://scenes/gameplay/hazards/black_hole.gd" id="1"]
 [ext_resource type="Script" uid="uid://ce8epyg7kpekx" path="res://scripts/components/gravitational_component.gd" id="2"]
+[ext_resource type="Script" uid="uid://d1k1l8h22k8v5" path="res://scripts/components/kill_zone_component.gd" id="3"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gravity"]
 radius = 300.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_killzone"]
+radius = 20.0
 
 [sub_resource type="Animation" id="Animation_pulse"]
 resource_name = "pulse"
@@ -38,6 +42,14 @@ script = ExtResource("2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GravitationalComponent"]
 shape = SubResource("CircleShape2D_gravity")
+
+[node name="KillZoneComponent" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 15
+script = ExtResource("3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZoneComponent"]
+shape = SubResource("CircleShape2D_killzone")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0.6, 0.4, 0.8, 1)

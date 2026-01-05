@@ -1,11 +1,15 @@
 class_name BlackHole
 extends Node2D
 
-## Black hole hazard with gravitational pull and overload mechanic
+## Black hole hazard with gravitational pull and kill zone
 ##
-## Black holes pull all nearby objects toward their center using inverse square law physics.
-## Objects that reach the center are instantly destroyed (including the player).
-## Black holes can be overloaded by consuming enough mass, causing them to explode.
+## Black holes pull nearby objects with GravitationalComponent and instantly
+## destroy objects at the center with KillZoneComponent. They grow stronger
+## as mass is absorbed and can be overloaded to trigger bonus points.
+##
+## Two-component system:
+## - GravitationalComponent: Pulls objects toward center (300px radius)
+## - KillZoneComponent: Instant death at center (20px radius)
 ##
 ## Signals:
 ## - destroyed: Emitted when the black hole is destroyed (lifetime or overload)
@@ -27,6 +31,7 @@ signal overloaded
 @export var pull_strength_growth: float = 500.0
 
 @onready var gravitational_component: GravitationalComponent = $GravitationalComponent
+@onready var kill_zone: KillZoneComponent = $KillZoneComponent
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var particles: GPUParticles2D = $GPUParticles2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -40,7 +45,10 @@ func _ready() -> void:
 	# Initialize gravitational component
 	if gravitational_component:
 		gravitational_component.pull_strength = initial_pull_strength
-		gravitational_component.mass_absorbed.connect(_on_mass_absorbed)
+
+	# Initialize kill zone component
+	if kill_zone:
+		kill_zone.object_killed.connect(_on_object_killed)
 
 	# Set up lifetime timer
 	if lifetime_timer:
@@ -70,8 +78,8 @@ func _process(_delta: float) -> void:
 		particles.amount = int(base_amount + (_absorbed_mass / overload_threshold) * max_additional)
 
 
-func _on_mass_absorbed(mass: float) -> void:
-	"""Handle mass absorption from captured objects"""
+func _on_object_killed(body: Node2D, mass: float) -> void:
+	"""Handle mass absorption from killed objects"""
 	_absorbed_mass += mass
 
 	# Increase pull strength as mass is absorbed
@@ -89,8 +97,9 @@ func _trigger_overload() -> void:
 	overloaded.emit()
 
 	# Award bonus score for overloading black hole
-	if has_node("/root/SessionManager"):
-		get_node("/root/SessionManager").add_score(500)
+	var game_manager = get_tree().get_first_node_in_group("game_manager")
+	if game_manager and game_manager.has_method("add_score"):
+		game_manager.add_score(500)
 
 	# Wait briefly for potential VFX, then destroy
 	await get_tree().create_timer(0.5).timeout

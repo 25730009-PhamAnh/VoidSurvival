@@ -5,23 +5,15 @@ extends Area2D
 ##
 ## This component detects physics bodies within a detection radius and applies
 ## gravitational forces toward a center point (the parent node's position).
-## Objects that reach the capture radius are instantly destroyed.
+## Forces use linear falloff for more predictable gameplay physics.
 ##
-## Signals:
-## - object_captured: Emitted when an object reaches the capture radius
-## - mass_absorbed: Emitted with the mass value of the captured object
-
-signal object_captured(body: Node2D)
-signal mass_absorbed(amount: float)
+## Signals: None (pure force application)
 
 ## Maximum pull force applied at detection radius
 @export var pull_strength: float = 100000.0
 
 ## Radius at which objects start being affected by gravity
 @export var detection_radius: float = 300.0
-
-## Radius at which objects are instantly destroyed
-@export var capture_radius: float = 20.0
 
 ## Maximum distance for pull effect (beyond this, no pull)
 @export var max_pull_distance: float = 500.0
@@ -94,11 +86,6 @@ func _apply_gravitational_forces(delta: float) -> void:
 		var direction = global_position - body.global_position
 		var distance = direction.length()
 
-		# Check if object should be captured (instant destruction)
-		if distance < capture_radius:
-			_capture_object(body)
-			continue
-
 		# Clamp distance to avoid extreme forces at very close range
 		var safe_distance = max(distance, 20.0)
 		# Linear falloff: at 100px with 10000 strength = 100 force (much stronger than inverse square)
@@ -137,42 +124,6 @@ func _should_affect_body(body: Node2D) -> bool:
 
 	# Default: affect all other bodies
 	return true
-
-
-func _capture_object(body: Node2D) -> void:
-	"""Handle object capture at the center (instant destruction)"""
-	object_captured.emit(body)
-
-	# Calculate mass absorbed (approximate based on body type)
-	var mass: float = 1.0
-	if body.is_in_group("asteroid"):
-		mass = 10.0
-	elif body.is_in_group("enemies"):
-		mass = 15.0
-	elif body.is_in_group("player"):
-		mass = 20.0
-	elif body.is_in_group("projectile"):
-		mass = 0.5
-
-	mass_absorbed.emit(mass)
-
-	# INSTANT DESTRUCTION - EVERYTHING at the center is destroyed
-	if body.is_in_group("player"):
-		# Player dies instantly when captured by black hole
-		if body.has_node("HealthComponent"):
-			# Deal massive damage to trigger instant death
-			body.get_node("HealthComponent").take_damage(999999.0)
-		else:
-			# Fallback: try to call died signal directly
-			if body.has_signal("died"):
-				body.emit_signal("died")
-
-	if body.has_node("HealthComponent"):
-			# Deal massive damage to trigger instant death
-			body.get_node("HealthComponent").take_damage(999999.0)
-	else:
-		# All other objects are destroyed immediately
-		body.queue_free()
 
 
 func _on_body_entered(body: Node2D) -> void:
