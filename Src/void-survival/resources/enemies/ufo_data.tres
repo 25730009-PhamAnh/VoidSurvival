@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3 uid="uid://ufo_data_resource_001"]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_definition.gd" id="1_enemy_def"]
+[ext_resource type="PackedScene" uid="uid://ufo_enemy_scene_001" path="res://scenes/gameplay/hazards/enemy_ufo.tscn" id="2_ufo_scene"]
+
+[resource]
+script = ExtResource("1_enemy_def")
+enemy_name = "UFO Scout"
+enemy_type = 1
+scene = ExtResource("2_ufo_scene")
+base_health = 50.0
+base_speed = 100.0
+base_damage = 15.0
+score_value = 20
+crystal_drop_count = 3
+health_scaling = 0.12
+speed_scaling = 0.06
+damage_scaling = 0.1

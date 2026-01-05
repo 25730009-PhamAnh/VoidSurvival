@@ -29,6 +29,12 @@ func _on_body_entered(body: Node2D) -> void:
 			asteroid.take_damage(damage)
 			SessionManager.record_shot_hit()
 			queue_free()
+	elif body.is_in_group("enemies"):
+		# Handle enemy damage
+		if body.has_method("take_damage"):
+			body.take_damage(damage)
+			SessionManager.record_shot_hit()
+			queue_free()
 
 func _on_screen_exited() -> void:
 	queue_free()

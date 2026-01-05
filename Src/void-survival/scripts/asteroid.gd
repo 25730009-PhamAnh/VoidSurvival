@@ -8,10 +8,12 @@ enum Size {LARGE, MEDIUM, SMALL}
 @export var size: Size = Size.LARGE
 @export var crystal_scene: PackedScene
 
-var health: float
 var collision_damage: float
 var score_value: int
 var rotation_speed: float
+
+@onready var health_component: HealthComponent = $HealthComponent
+@onready var movement_component: MovementComponent = $MovementComponent
 
 func _ready() -> void:
 	add_to_group("asteroid")
@@ -19,51 +21,48 @@ func _ready() -> void:
 	rotation_speed = randf_range(-1.0, 1.0)
 	body_entered.connect(_on_body_entered)
 
+	# Connect component signal
+	if health_component:
+		health_component.died.connect(_on_health_component_died)
+
 func _setup_size() -> void:
+	var health_value: float
 	match size:
 		Size.LARGE:
-			health = 30.0
+			health_value = 30.0
 			collision_damage = 40.0
 			score_value = 100
 			scale = Vector2.ONE * 1.0
 		Size.MEDIUM:
-			health = 15.0
+			health_value = 15.0
 			collision_damage = 20.0
 			score_value = 50
 			scale = Vector2.ONE * 0.6
 		Size.SMALL:
-			health = 5.0
+			health_value = 5.0
 			collision_damage = 10.0
 			score_value = 25
 			scale = Vector2.ONE * 0.35
 
+	# Configure component health
+	if health_component:
+		health_component.max_health = health_value
+		health_component.current_health = health_value
+
 func _physics_process(delta: float) -> void:
 	rotate(rotation_speed * delta)
-	_wrap_around_screen()
 
-func _wrap_around_screen() -> void:
-	var screen_size = get_viewport().get_visible_rect().size
-	var pos = global_position
-
-	if pos.x < -50:
-		pos.x = screen_size.x + 50
-	elif pos.x > screen_size.x + 50:
-		pos.x = -50
-
-	if pos.y < -50:
-		pos.y = screen_size.y + 50
-	elif pos.y > screen_size.y + 50:
-		pos.y = -50
-
-	global_position = pos
-
+# Convenience wrapper for projectiles
 func take_damage(amount: float) -> void:
-	health -= amount
-	if health <= 0:
-		_spawn_crystals()
-		_split()
-		destroyed.emit(score_value)
-		queue_free()
+	if health_component:
+		health_component.take_damage(amount)
+
+func _on_health_component_died() -> void:
+	"""Handle death - MUST run before queue_free"""
+	_spawn_crystals()
+	_split()
+	destroyed.emit(score_value)
+	queue_free()
 
 func _split() -> void:
 	if size == Size.SMALL:

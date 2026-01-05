@@ -8,8 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Void Survival** is a space shooter game built with **Godot 4.5** where players control a spaceship, destroy asteroids, and survive as long as possible.
 
-**Current Status**: Phase 1 Foundation - Complete! (Modules 1-5 done)
-**Next Module**: Module 6 - Enemy Variety & Challenge Escalation
+**Current Status**: Phase 2 Content Expansion - In Progress (Modules 1-6 done)
+**Next Module**: Module 7 - Black Hole Hazard System
 **Target Platforms**: Mobile (iOS/Android), PC
 
 ### Documentation Structure
@@ -42,11 +42,17 @@ All design and planning documentation is in `Documents/`:
 
 ```
 Src/void-survival/
-├── scenes/prototype/       # Core gameplay (game.tscn, player.tscn, asteroid.tscn)
-├── scenes/ui/             # HUD, game over, upgrade shop + components
-├── scripts/autoload/      # ResourceManager, SaveSystem, SessionManager, UpgradeSystem
-├── scripts/resources/     # ItemDefinition custom Resource class
-└── resources/items/       # .tres files (defensive/, offensive/, utility/)
+├── scenes/
+│   ├── prototype/              # Core gameplay (game.tscn, player.tscn, asteroid.tscn)
+│   ├── gameplay/hazards/       # Enemy scenes (enemy_ufo.tscn, enemy_comet.tscn)
+│   └── ui/                     # HUD, game over, upgrade shop + components
+├── scripts/
+│   ├── autoload/               # ResourceManager, SaveSystem, SessionManager, UpgradeSystem
+│   ├── resources/              # ItemDefinition, EnemyDefinition Resource classes
+│   └── gameplay/spawners/      # EnemySpawner system
+└── resources/
+    ├── items/                  # .tres files (defensive/, offensive/, utility/)
+    └── enemies/                # .tres files (ufo_data, comet_data)
 ```
 
 ---
@@ -90,10 +96,34 @@ Defined in `project.godot`:
 ### Physics Layers
 
 1. **Layer 1**: Player
-2. **Layer 2**: Asteroids
+2. **Layer 2**: Asteroids & Enemies (UFOs, Comets)
 4. **Layer 4**: Projectiles
 
 **Note**: Zero gravity (`2d/default_gravity=0.0`) and no linear damping for space physics.
+
+### Enemy System (Module 6)
+
+**Enemy Types**:
+- **UFO Scout**: Sinusoidal movement pattern, shoots at player with lead targeting
+- **Void Comet**: Drifts slowly, then telegraphs and charges at high speed toward player
+
+**EnemyDefinition Resource**: Data-driven enemy configuration with difficulty scaling
+- Base stats: health, speed, damage, score value, crystal drops
+- Scaling formulas: health/speed/damage increase with difficulty
+- Scene reference: PackedScene for enemy type
+
+**EnemySpawner**: Manages enemy spawning based on difficulty
+- Spawn intervals decrease with difficulty (survival time / 10)
+- Max limits per enemy type (3 UFOs, 5 Comets)
+- Automatic crystal spawning on enemy destruction
+- Tracks enemy kills in SessionManager
+
+**Signal Flow**:
+```
+Enemy spawned → initialized with difficulty-scaled stats
+Enemy destroyed → destroyed(score, crystals, position) → GameManager.add_score() + spawn crystals
+Enemy damaged → damaged signal (for future VFX)
+```
 
 ### Progression & Persistence
 
@@ -270,15 +300,16 @@ You are an expert in **Godot 4** and **GDScript**, and you strictly follow **God
 
 ## Current Status
 
-**✅ Complete**: Phase 1 Foundation (Modules 1-5)
+**✅ Complete**: Phase 1 Foundation (Modules 1-5) + Module 6
 - Module 1-2: Resource system (crystals, credits) + Save/Load
 - Module 3: Credit economy & post-game flow
 - Module 4: Shop UI with equip/upgrade
 - Module 5: Stat calculation system (items modify player stats in real-time)
+- Module 6: Enemy Variety & Spawning (UFO + Comet enemies with data-driven system)
 
-**🚧 Next**: Module 6 - Enemy Variety & Challenge Escalation
+**🚧 Next**: Module 7 - Black Hole Hazard System
 
-**📋 Remaining**: Modules 6-12 (enemies, hazards, difficulty, weapons, VFX, menus)
+**📋 Remaining**: Modules 7-12 (black holes, difficulty, weapons, VFX, menus, hyperspace)
 
 **Core Progression Loop**: Fully functional - Play → Earn Crystals → Buy/Upgrade Items → Equip Items → Stats Increase → Play Better
 

@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=3 uid="uid://bb5mlxjubdhe1"]
+
+[ext_resource type="Script" uid="uid://bmma5kwcykmlx" path="res://scenes/gameplay/hazards/enemy_comet.gd" id="1_comet"]
+[ext_resource type="PackedScene" uid="uid://bg8x3qv2wnxnp" path="res://scenes/components/health_component.tscn" id="2_health"]
+[ext_resource type="PackedScene" uid="uid://cnb7uw3g8yjh5" path="res://scenes/components/movement_component.tscn" id="3_movement"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_comet"]
+radius = 8.0
+height = 34.0
+
+[node name="EnemyComet" type="RigidBody2D"]
+collision_layer = 2
+collision_mask = 5
+mass = 2.0
+gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 4
+script = ExtResource("1_comet")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.9, 0.5, 0.1, 1)
+
+[node name="Polygon2D" type="Polygon2D" parent="Sprite2D"]
+color = Color(0.9, 0.5, 0.1, 1)
+polygon = PackedVector2Array(20, 0, -10, -8, -10, 8)
+
+[node name="Hitbox" type="CollisionShape2D" parent="."]
+position = Vector2(4, 0)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_comet")
+
+[node name="ChargeTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[node name="TelegraphSprite" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(1, 0, 0, 0.5)
+scale = Vector2(1.5, 1.5)
+
+[node name="Polygon2D" type="Polygon2D" parent="TelegraphSprite"]
+color = Color(1, 0, 0, 0.5)
+polygon = PackedVector2Array(30, 0, -15, -12, -15, 12)
+
+[node name="HealthComponent" parent="." instance=ExtResource("2_health")]
+max_health = 40.0
+
+[node name="MovementComponent" parent="." instance=ExtResource("3_movement")]
+wrap_mode = 1
+wrap_margin = 50.0

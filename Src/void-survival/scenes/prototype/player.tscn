@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://d1n5x7q8p4w2v"]
+[gd_scene load_steps=6 format=3 uid="uid://d1n5x7q8p4w2v"]
 
 [ext_resource type="Script" uid="uid://dqtu6tjtbxh82" path="res://scripts/player.gd" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://bm8xqyh1n7g4v" path="res://scenes/prototype/projectile.tscn" id="2_projectile"]
 [ext_resource type="PackedScene" uid="uid://cp5l8j7xqxhdn" path="res://scenes/components/collection_component.tscn" id="3_collection"]
+[ext_resource type="PackedScene" uid="uid://bg8x3qv2wnxnp" path="res://scenes/components/health_component.tscn" id="4_health"]
+[ext_resource type="PackedScene" uid="uid://cnb7uw3g8yjh5" path="res://scenes/components/movement_component.tscn" id="5_movement"]
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_mask = 2
@@ -20,3 +22,12 @@ polygon = PackedVector2Array(0, -20, -15, 15, 15, 15)
 position = Vector2(0, -25)
 
 [node name="CollectionComponent" parent="." instance=ExtResource("3_collection")]
+
+[node name="HealthComponent" parent="." instance=ExtResource("4_health")]
+max_health = 100.0
+invincibility_enabled = true
+invincibility_duration = 1.0
+track_damage_in_session = true
+
+[node name="MovementComponent" parent="." instance=ExtResource("5_movement")]
+wrap_mode = 0

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3 uid="uid://comet_data_resource_001"]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_definition.gd" id="1_enemy_def"]
+[ext_resource type="PackedScene" uid="uid://comet_enemy_scene_001" path="res://scenes/gameplay/hazards/enemy_comet.tscn" id="2_comet_scene"]
+
+[resource]
+script = ExtResource("1_enemy_def")
+enemy_name = "Void Comet"
+enemy_type = 2
+scene = ExtResource("2_comet_scene")
+base_health = 80.0
+base_speed = 50.0
+base_damage = 30.0
+score_value = 15
+crystal_drop_count = 2
+health_scaling = 0.15
+speed_scaling = 0.04
+damage_scaling = 0.12

@@ -5,36 +5,35 @@ signal died
 signal shield_changed(current: float, maximum: float)
 
 const ROTATION_SPEED = 3.0
-const INVINCIBILITY_TIME = 1.0  # seconds of invincibility after taking damage
 const BOUNCE_FORCE = 100.0  # knockback force when hitting asteroid
 
 @export var projectile_scene: PackedScene
 
 # Stats (set from UpgradeSystem)
-var max_shield: float = 100.0
 var max_speed: float = 300.0
 var acceleration: float = 200.0
 var fire_rate: float = 2.0  # shots per second
 var projectile_damage: float = 10.0
 var projectile_speed: float = 400.0
 
-var current_shield: float
 var _fire_timer: float = 0.0
-var _invincibility_timer: float = 0.0
 
 @onready var shoot_point: Marker2D = $ShootPoint
 @onready var collection_component: Area2D = $CollectionComponent
+@onready var health_component: HealthComponent = $HealthComponent
+@onready var movement_component: MovementComponent = $MovementComponent
 
 func _ready() -> void:
+	# Connect component signals (forwarding for HUD/GameManager)
+	if health_component:
+		health_component.shield_changed.connect(_on_health_component_shield_changed)
+		health_component.died.connect(_on_health_component_died)
+
 	# Connect to stat updates
 	UpgradeSystem.stats_updated.connect(_on_stats_updated)
 
 	# Apply initial stats
 	_apply_stats(UpgradeSystem.get_final_stats())
-
-	# Initialize shield
-	current_shield = max_shield
-	shield_changed.emit(current_shield, max_shield)
 
 	# Connect collection
 	collection_component.item_collected.connect(_on_item_collected)
@@ -45,7 +44,10 @@ func _on_stats_updated() -> void:
 
 
 func _apply_stats(stats: Dictionary) -> void:
-	max_shield = stats.max_shield
+	# Update health component max
+	if health_component:
+		health_component.set_max_health(stats.max_shield)
+
 	max_speed = stats.move_speed
 	acceleration = stats.acceleration
 	fire_rate = stats.fire_rate
@@ -59,7 +61,6 @@ func _apply_stats(stats: Dictionary) -> void:
 func _physics_process(delta: float) -> void:
 	_handle_input(delta)
 	_update_movement(delta)
-	_wrap_around_screen()
 
 func _handle_input(delta: float) -> void:
 	# Rotation
@@ -78,28 +79,27 @@ func _handle_input(delta: float) -> void:
 	else:
 		_fire()
 
-	# Invincibility timer
-	if _invincibility_timer > 0:
-		_invincibility_timer -= delta
-
 func _update_movement(_delta: float) -> void:
 	move_and_slide()
 
-	# Check for collisions with asteroids (only if not invincible)
-	if _invincibility_timer <= 0:
-		for i in get_slide_collision_count():
-			var collision = get_slide_collision(i)
-			var collider = collision.get_collider()
-			if collider and collider.is_in_group("asteroid"):
-				var asteroid = collider as Asteroid
-				if asteroid:
-					# Apply bounce/knockback
-					var bounce_direction = collision.get_normal()
-					velocity = bounce_direction * BOUNCE_FORCE
+	# Check collisions only if not invincible
+	if health_component and health_component.is_invincible:
+		return
 
-					# Take damage
-					take_damage(asteroid.collision_damage)
-					break  # Only take damage from one asteroid per frame
+	for i in get_slide_collision_count():
+		var collision = get_slide_collision(i)
+		var collider = collision.get_collider()
+		if collider and collider.is_in_group("asteroid"):
+			var asteroid = collider as Asteroid
+			if asteroid:
+				# Apply bounce/knockback
+				var bounce_direction = collision.get_normal()
+				velocity = bounce_direction * BOUNCE_FORCE
+
+				# Delegate damage to component
+				if health_component:
+					health_component.take_damage(asteroid.collision_damage)
+				break  # Only take damage from one asteroid per frame
 
 func _fire() -> void:
 	if not projectile_scene:
@@ -121,33 +121,19 @@ func _fire() -> void:
 
 	get_parent().add_child(projectile)
 
-func _wrap_around_screen() -> void:
-	var screen_size = get_viewport_rect().size
-	var pos = global_position
-
-	if pos.x < 0:
-		pos.x = screen_size.x
-	elif pos.x > screen_size.x:
-		pos.x = 0
-
-	if pos.y < 0:
-		pos.y = screen_size.y
-	elif pos.y > screen_size.y:
-		pos.y = 0
-
-	global_position = pos
-
+# Convenience wrapper for collisions
 func take_damage(amount: float) -> void:
-	current_shield -= amount
-	SessionManager.record_damage_taken(amount)
-	shield_changed.emit(current_shield, max_shield)
+	if health_component:
+		health_component.take_damage(amount)
 
-	if current_shield <= 0:
-		died.emit()
-		queue_free()
-	else:
-		# Activate invincibility after taking damage
-		_invincibility_timer = INVINCIBILITY_TIME
+# Signal forwarding for HUD compatibility
+func _on_health_component_shield_changed(current: float, maximum: float) -> void:
+	shield_changed.emit(current, maximum)
+
+# Signal forwarding for GameManager compatibility
+func _on_health_component_died() -> void:
+	died.emit()
+	queue_free()
 
 
 func _on_item_collected(item: Node2D, value: int) -> void:

@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://cj4kw8h5p2m1x"]
+[gd_scene load_steps=5 format=3 uid="uid://cj4kw8h5p2m1x"]
 
 [ext_resource type="Script" uid="uid://0jpl56utlvgj" path="res://scripts/asteroid.gd" id="1_asteroid"]
 [ext_resource type="PackedScene" uid="uid://bsm3ql7y4kl8r" path="res://scenes/pickups/crystal.tscn" id="2_crystal"]
+[ext_resource type="PackedScene" uid="uid://bg8x3qv2wnxnp" path="res://scenes/components/health_component.tscn" id="3_health"]
+[ext_resource type="PackedScene" uid="uid://cnb7uw3g8yjh5" path="res://scenes/components/movement_component.tscn" id="4_movement"]
 
 [node name="Asteroid" type="RigidBody2D"]
 collision_layer = 2
@@ -20,3 +22,10 @@ polygon = PackedVector2Array(0, -40, 30, -10, 30, 20, 0, 40, -30, 20, -30, -10)
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 scale = Vector2(2, 2)
+
+[node name="HealthComponent" parent="." instance=ExtResource("3_health")]
+max_health = 30.0
+
+[node name="MovementComponent" parent="." instance=ExtResource("4_movement")]
+wrap_mode = 1
+wrap_margin = 50.0
