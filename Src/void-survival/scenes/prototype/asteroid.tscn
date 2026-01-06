@@ -1,9 +1,25 @@
-[gd_scene load_steps=5 format=3 uid="uid://cj4kw8h5p2m1x"]
+[gd_scene load_steps=8 format=3 uid="uid://cj4kw8h5p2m1x"]
 
 [ext_resource type="Script" uid="uid://0jpl56utlvgj" path="res://scripts/asteroid.gd" id="1_asteroid"]
-[ext_resource type="PackedScene" uid="uid://bsm3ql7y4kl8r" path="res://scenes/pickups/crystal.tscn" id="2_crystal"]
 [ext_resource type="PackedScene" uid="uid://bg8x3qv2wnxnp" path="res://scenes/components/health_component.tscn" id="3_health"]
 [ext_resource type="PackedScene" uid="uid://cnb7uw3g8yjh5" path="res://scenes/components/movement_component.tscn" id="4_movement"]
+[ext_resource type="Script" uid="uid://d0ibi7xqixd44" path="res://scripts/resources/pickup_spawn_config.gd" id="5_0e6nv"]
+[ext_resource type="PackedScene" uid="uid://bxdcx8h3q2vwp" path="res://scenes/components/pickup_spawner_component.tscn" id="5_pickup_spawner"]
+
+[sub_resource type="Resource" id="Resource_lvore"]
+resource_name = "Crystal pickup"
+script = ExtResource("5_0e6nv")
+min_count = 3
+max_count = 5
+metadata/_custom_type_script = "uid://d0ibi7xqixd44"
+
+[sub_resource type="Resource" id="Resource_0e6nv"]
+resource_name = "Health Pickup"
+script = ExtResource("5_0e6nv")
+pickup_type = 1
+spawn_chance = 10.0
+max_count = 1
+metadata/_custom_type_script = "uid://d0ibi7xqixd44"
 
 [node name="Asteroid" type="RigidBody2D"]
 collision_layer = 2
@@ -11,7 +27,6 @@ gravity_scale = 0.0
 contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_asteroid")
-crystal_scene = ExtResource("2_crystal")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 color = Color(0.5, 0.5, 0.5, 1)
@@ -27,5 +42,7 @@ scale = Vector2(2, 2)
 max_health = 30.0
 
 [node name="MovementComponent" parent="." instance=ExtResource("4_movement")]
-wrap_mode = 1
-wrap_margin = 50.0
+
+[node name="PickupSpawnerComponent" parent="." instance=ExtResource("5_pickup_spawner")]
+spawn_configs = Array[ExtResource("5_0e6nv")]([SubResource("Resource_lvore"), SubResource("Resource_0e6nv")])
+spread_radius = 15.0

@@ -7,10 +7,11 @@ extends RigidBody2D
 
 signal collected(pickup: PickupBase)
 
-@export var pickup_definition: PickupDefinition
+var pickup_definition: PickupDefinition  # Set via set_pickup_definition(), not exposed in editor
 
 # Visual components (to be overridden in derived classes)
 @onready var sprite: Sprite2D = $Sprite2D if has_node("Sprite2D") else null
+@onready var color_rect: ColorRect = $ColorRect if has_node("ColorRect") else null
 @onready var collection_particles: CPUParticles2D = $CollectionParticles if has_node("CollectionParticles") else null
 
 var _was_collected: bool = false
@@ -23,10 +24,6 @@ func _ready() -> void:
 	gravity_scale = 0.0
 	linear_damp = 2.0
 
-	# Apply definition visuals if available
-	if pickup_definition and sprite:
-		_apply_visual_properties()
-
 	# Subclasses can override _on_ready_extended()
 	_on_ready_extended()
 
@@ -36,10 +33,30 @@ func _on_ready_extended() -> void:
 	pass
 
 
+## Set pickup definition and apply configuration
+## Called by PickupSpawnerComponent after instantiation
+func set_pickup_definition(definition: PickupDefinition) -> void:
+	pickup_definition = definition
+	if pickup_definition:
+		_apply_visual_properties()
+
+
 func _apply_visual_properties() -> void:
-	if pickup_definition and sprite:
+	print("[PickupBase] Applying visual properties for pickup: ", pickup_definition.pickup_name)
+	if not pickup_definition:
+		return
+
+	print(" - Color: ", pickup_definition.color)
+
+	# Option 1: ColorRect (preferred for solid colors)
+	if color_rect:
+		color_rect.color = pickup_definition.color
+
+	# Option 2: Sprite2D with icon (for custom textures)
+	if sprite:
 		sprite.modulate = pickup_definition.color
 		if pickup_definition.icon:
+			print(" - Icon: ", pickup_definition.icon.resource_path if pickup_definition.icon else "None")
 			sprite.texture = pickup_definition.icon
 
 
@@ -80,9 +97,11 @@ func _play_collection_vfx() -> void:
 		collection_particles.emitting = true
 		collection_particles.one_shot = true
 
-	# Hide sprite and disable collision
+	# Hide visual elements and disable collision
 	if sprite:
 		sprite.visible = false
+	if color_rect:
+		color_rect.visible = false
 	set_deferred("freeze", true)
 
 
@@ -95,8 +114,16 @@ func _cleanup() -> void:
 
 ## Optional: Floating animation (can be overridden)
 func _process(delta: float) -> void:
-	if pickup_definition and sprite:
-		var time_elapsed = Time.get_ticks_msec() / 1000.0
+	if not pickup_definition:
+		return
+
+	var time_elapsed = Time.get_ticks_msec() / 1000.0
+	var float_offset = sin(time_elapsed * pickup_definition.float_speed) * pickup_definition.float_amplitude
+
+	# Apply rotation and floating to available visual element
+	if sprite:
 		sprite.rotation += pickup_definition.rotation_speed * delta
-		var float_offset = sin(time_elapsed * pickup_definition.float_speed) * pickup_definition.float_amplitude
 		sprite.position.y = float_offset
+	elif color_rect:
+		color_rect.rotation += pickup_definition.rotation_speed * delta
+		color_rect.position.y = float_offset

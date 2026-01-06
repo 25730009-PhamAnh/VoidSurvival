@@ -1,8 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://bb5mlxjubdhe1"]
+[gd_scene load_steps=6 format=3 uid="uid://bb5mlxjubdhe1"]
 
 [ext_resource type="Script" uid="uid://bmma5kwcykmlx" path="res://scenes/gameplay/hazards/enemy_comet.gd" id="1_comet"]
 [ext_resource type="PackedScene" uid="uid://bg8x3qv2wnxnp" path="res://scenes/components/health_component.tscn" id="2_health"]
 [ext_resource type="PackedScene" uid="uid://cnb7uw3g8yjh5" path="res://scenes/components/movement_component.tscn" id="3_movement"]
+[ext_resource type="PackedScene" uid="uid://bxdcx8h3q2vwp" path="res://scenes/components/pickup_spawner_component.tscn" id="4_pickup_spawner"]
+
+[sub_resource type="PickupSpawnConfig" id="PickupSpawnConfig_comet"]
+pickup_type = 0
+spawn_chance = 100.0
+min_count = 2
+max_count = 2
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_comet"]
 radius = 8.0
@@ -48,3 +55,7 @@ max_health = 40.0
 [node name="MovementComponent" parent="." instance=ExtResource("3_movement")]
 wrap_mode = 1
 wrap_margin = 50.0
+
+[node name="PickupSpawnerComponent" parent="." instance=ExtResource("4_pickup_spawner")]
+spread_radius = 30.0
+spawn_configs = Array[PickupSpawnConfig]([SubResource("PickupSpawnConfig_comet")])

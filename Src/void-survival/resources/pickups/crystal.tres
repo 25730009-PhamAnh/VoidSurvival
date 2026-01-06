@@ -1,17 +1,11 @@
-[gd_resource type="Resource" script_class="PickupDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="PickupDefinition" load_steps=3 format=3 uid="uid://chyice2s00a1w"]
 
-[ext_resource type="Script" path="res://scripts/resources/pickup_definition.gd" id="1_pickup_definition"]
+[ext_resource type="Script" uid="uid://cw1868c5cbrbr" path="res://scripts/resources/pickup_definition.gd" id="1_pickup_definition"]
+[ext_resource type="PackedScene" uid="uid://bsm3ql7y4kl8r" path="res://scenes/pickups/crystal.tscn" id="2_crystal_scene"]
 
 [resource]
 script = ExtResource("1_pickup_definition")
 pickup_name = "Crystal"
-pickup_type = 0
 description = "Currency used to purchase upgrades. Converts to credits at end of session."
 color = Color(0, 1, 1, 1)
-rotation_speed = 2.0
-float_amplitude = 5.0
-float_speed = 3.0
-base_value = 1.0
-duration = 0.0
-stack_behavior = false
-spawn_weight = 1.0
+scene = ExtResource("2_crystal_scene")

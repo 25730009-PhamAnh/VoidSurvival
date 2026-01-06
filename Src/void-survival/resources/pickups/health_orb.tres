@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="PickupDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="PickupDefinition" load_steps=3 format=3 uid="uid://dowygwdymrf1a"]
 
-[ext_resource type="Script" path="res://scripts/resources/pickup_definition.gd" id="1_pickup_definition"]
+[ext_resource type="Script" uid="uid://cw1868c5cbrbr" path="res://scripts/resources/pickup_definition.gd" id="1_pickup_definition"]
+[ext_resource type="PackedScene" uid="uid://bh78pq20axl3r" path="res://scenes/pickups/health_pickup.tscn" id="2_health_scene"]
 
 [resource]
 script = ExtResource("1_pickup_definition")
@@ -12,6 +13,5 @@ rotation_speed = 3.0
 float_amplitude = 7.0
 float_speed = 4.0
 base_value = 20.0
-duration = 0.0
-stack_behavior = false
 spawn_weight = 0.3
+scene = ExtResource("2_health_scene")

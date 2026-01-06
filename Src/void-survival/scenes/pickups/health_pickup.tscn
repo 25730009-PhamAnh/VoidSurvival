@@ -1,8 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://bh78pq20axl3r"]
+[gd_scene load_steps=5 format=3 uid="uid://bh78pq20axl3r"]
 
-[ext_resource type="Script" path="res://scripts/pickups/health_pickup.gd" id="1_health_pickup"]
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_health"]
+[ext_resource type="Script" uid="uid://dgm5n42pbeb4h" path="res://scripts/pickups/health_pickup.gd" id="1_health_pickup"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_health"]
 radius = 8.0
@@ -21,10 +19,12 @@ gravity_scale = 0.0
 linear_damp = 2.0
 script = ExtResource("1_health_pickup")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0, 1, 0, 1)
-scale = Vector2(16, 16)
-texture = SubResource("PlaceholderTexture2D_health")
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+color = Color(0, 1, 0, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_health")

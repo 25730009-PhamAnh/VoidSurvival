@@ -139,18 +139,7 @@ func _on_enemy_destroyed(score: int, crystals: int, position: Vector2, type: Ene
 	if _game_manager:
 		_game_manager.add_score(score)
 
-	# Spawn crystals
-	_spawn_crystals(crystals, position)
+	# Crystal spawning now handled by PickupSpawnerComponent on enemy
 
 	# Track in session manager
 	SessionManager.record_enemy_destroyed()
-
-func _spawn_crystals(count: int, position: Vector2) -> void:
-	# Use centralized spawner (NEW)
-	var spawner = get_tree().get_first_node_in_group("pickup_spawner")
-	if spawner and spawner.has_method("spawn_pickups"):
-		spawner.spawn_pickups(count, position, PickupDefinition.PickupType.CRYSTAL, 30.0)
-	else:
-		# Fallback: add directly if spawner not available (OLD)
-		push_warning("PickupSpawner not found, adding crystals directly to ResourceManager")
-		ResourceManager.add_crystals(count)

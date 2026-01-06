@@ -1,6 +1,16 @@
+# DEPRECATED: Replaced by PickupSpawnerComponent
+# This centralized spawner is no longer used in the codebase
+# See: scripts/components/pickup_spawner_component.gd
+#
+# Migration notes:
+# - Asteroids now use PickupSpawnerComponent attached to asteroid scene
+# - Enemies now use PickupSpawnerComponent attached to enemy scenes
+# - This file is kept temporarily for reference and can be deleted after testing
+
 class_name PickupSpawner
 extends Node
 
+## DEPRECATED - Use PickupSpawnerComponent instead
 ## Centralized pickup spawning utility
 ## Manages weighted random spawning and scene instantiation
 ## Replaces hardcoded crystal spawning in Asteroid and EnemySpawner
@@ -91,7 +101,7 @@ func _spawn_single_pickup(pickup_type: int) -> PickupBase:
 	# Instantiate and configure
 	var pickup = scene.instantiate() as PickupBase
 	if pickup:
-		pickup.pickup_definition = definition
+		pickup.set_pickup_definition(definition)
 
 	return pickup
 

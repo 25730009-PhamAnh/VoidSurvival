@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://ufo_enemy_scene_001"]
+[gd_scene load_steps=6 format=3 uid="uid://c3v52ndfdb88n"]
 
-[ext_resource type="Script" path="res://scenes/gameplay/hazards/enemy_ufo.gd" id="1_ufo"]
+[ext_resource type="Script" uid="uid://btukas70wpmd7" path="res://scenes/gameplay/hazards/enemy_ufo.gd" id="1_ufo"]
 [ext_resource type="PackedScene" uid="uid://bg8x3qv2wnxnp" path="res://scenes/components/health_component.tscn" id="2_health"]
 [ext_resource type="PackedScene" uid="uid://cnb7uw3g8yjh5" path="res://scenes/components/movement_component.tscn" id="3_movement"]
+[ext_resource type="PackedScene" uid="uid://bxdcx8h3q2vwp" path="res://scenes/components/pickup_spawner_component.tscn" id="4_pickup_spawner"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ufo"]
 radius = 20.0
@@ -33,7 +34,5 @@ autostart = true
 max_health = 50.0
 
 [node name="MovementComponent" parent="." instance=ExtResource("3_movement")]
-wrap_mode = 1
-wrap_margin = 50.0
 
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[node name="PickupSpawnerComponent" parent="." instance=ExtResource("4_pickup_spawner")]

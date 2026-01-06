@@ -5,6 +5,22 @@ signal destroyed(score_value: int)
 
 enum Size {LARGE, MEDIUM, SMALL}
 
+# Size configuration constants
+const LARGE_HEALTH: float = 10.0
+const LARGE_DAMAGE: float = 40.0
+const LARGE_SCORE: int = 100
+const LARGE_SCALE: float = 1.0
+
+const MEDIUM_HEALTH: float = 5.0
+const MEDIUM_DAMAGE: float = 20.0
+const MEDIUM_SCORE: int = 50
+const MEDIUM_SCALE: float = 0.6
+
+const SMALL_HEALTH: float = 1.0
+const SMALL_DAMAGE: float = 10.0
+const SMALL_SCORE: int = 25
+const SMALL_SCALE: float = 0.35
+
 @export var size: Size = Size.LARGE
 
 var collision_damage: float
@@ -28,20 +44,20 @@ func _setup_size() -> void:
 	var health_value: float
 	match size:
 		Size.LARGE:
-			health_value = 30.0
-			collision_damage = 40.0
-			score_value = 100
-			scale = Vector2.ONE * 1.0
+			health_value = LARGE_HEALTH
+			collision_damage = LARGE_DAMAGE
+			score_value = LARGE_SCORE
+			scale = Vector2.ONE * LARGE_SCALE
 		Size.MEDIUM:
-			health_value = 15.0
-			collision_damage = 20.0
-			score_value = 50
-			scale = Vector2.ONE * 0.6
+			health_value = MEDIUM_HEALTH
+			collision_damage = MEDIUM_DAMAGE
+			score_value = MEDIUM_SCORE
+			scale = Vector2.ONE * MEDIUM_SCALE
 		Size.SMALL:
-			health_value = 5.0
-			collision_damage = 10.0
-			score_value = 25
-			scale = Vector2.ONE * 0.35
+			health_value = SMALL_HEALTH
+			collision_damage = SMALL_DAMAGE
+			score_value = SMALL_SCORE
+			scale = Vector2.ONE * SMALL_SCALE
 
 	# Configure component health
 	if health_component:
@@ -58,7 +74,7 @@ func take_damage(amount: float) -> void:
 
 func _on_health_component_died() -> void:
 	"""Handle death - MUST run before queue_free"""
-	_spawn_crystals()
+	# Crystal spawning now handled by PickupSpawnerComponent
 	_split()
 	destroyed.emit(score_value)
 	queue_free()
@@ -81,21 +97,6 @@ func _split() -> void:
 		asteroid.linear_velocity = Vector2.UP.rotated(angle) * speed
 
 		get_parent().call_deferred("add_child", asteroid)
-
-
-func _spawn_crystals() -> void:
-	var crystal_count = 0
-	match size:
-		Size.LARGE: crystal_count = randi_range(3, 5)
-		Size.MEDIUM: crystal_count = randi_range(2, 3)
-		Size.SMALL: crystal_count = 1
-
-	# Use centralized spawner
-	var spawner = get_tree().get_first_node_in_group("pickup_spawner")
-	if spawner and spawner.has_method("spawn_pickups"):
-		spawner.spawn_pickups(crystal_count, global_position, PickupDefinition.PickupType.CRYSTAL, 15.0)
-	else:
-		push_warning("Asteroid: PickupSpawner not found in scene tree")
 
 
 func _on_body_entered(_body: Node) -> void:

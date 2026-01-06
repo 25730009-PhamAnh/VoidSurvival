@@ -76,7 +76,7 @@ Src/void-survival/
 - **SessionManager**: Tracks stats (time, kills, accuracy), calculates credit bonuses
 - **UpgradeSystem**: Manages `equipped_items` array, `item_levels` dict, 4 slots default
 
-**Gameplay**: Player (CharacterBody2D) → shoots Projectiles → destroys Asteroids (RigidBody2D, splits 3→2→1) → spawns Crystals → CollectionComponent attracts → ResourceManager tracks
+**Gameplay**: Player (CharacterBody2D) → shoots Projectiles → destroys Asteroids (RigidBody2D, splits 3→2→1) → PickupSpawnerComponent spawns Crystals → CollectionComponent attracts → ResourceManager tracks
 
 **UI**: HUD (in-game) → GameOverScreen (stats) → UpgradeShop (loads items from dirs) → UpgradeCard (per-item)
 
@@ -85,7 +85,7 @@ Src/void-survival/
 ### Key Signal Flows
 
 ```
-Asteroid destroyed → destroyed signal → GameManager + Spawner → spawns Crystal
+Asteroid destroyed → HealthComponent.died → PickupSpawnerComponent spawns Crystals → destroyed signal → GameManager
 Player dies → died signal → SessionManager.end_session() → GameOverScreen
 Shop upgrade → UpgradeSystem.upgrade_item() → credits_changed + item_upgraded → auto-save
 ```
@@ -116,6 +116,7 @@ Defined in `project.godot`:
 - **CollectionComponent**: Attracts and collects pickups (crystals) in range
 - **GravitationalComponent**: Applies gravitational pull to nearby physics bodies
 - **KillZoneComponent**: Destroys objects that enter center area (used by black holes)
+- **PickupSpawnerComponent**: Spawns pickups on death with configurable probability and counts
 
 ### Enemy System (Module 6)
 
@@ -131,13 +132,13 @@ Defined in `project.godot`:
 **EnemySpawner**: Manages enemy spawning based on difficulty
 - Spawn intervals decrease with difficulty (survival time / 10)
 - Max limits per enemy type (3 UFOs, 5 Comets)
-- Automatic crystal spawning on enemy destruction
 - Tracks enemy kills in SessionManager
 
 **Signal Flow**:
 ```
 Enemy spawned → initialized with difficulty-scaled stats
-Enemy destroyed → destroyed(score, crystals, position) → GameManager.add_score() + spawn crystals
+Enemy destroyed → HealthComponent.died → PickupSpawnerComponent spawns crystals
+              → destroyed(score, crystals, position) → GameManager.add_score()
 Enemy damaged → damaged signal (for future VFX)
 ```
 
@@ -176,7 +177,9 @@ Enemy damaged → damaged signal (for future VFX)
 
 **Adding enemies**: Create `.tres` EnemyDefinition in `resources/enemies/`, reference enemy scene, spawner auto-configures
 
-**Component-based design**: Attach components (Health, Movement, Gravitational, etc.) to scenes for reusable behavior
+**Pickup spawning**: Use PickupSpawnerComponent - auto-connects to HealthComponent.died signal, configures via PickupSpawnConfig resources (pickup_type, spawn_chance %, min/max count), supports multi-type probabilistic drops with independent rolling
+
+**Component-based design**: Attach components (Health, Movement, Gravitational, PickupSpawner, etc.) to scenes for reusable behavior
 
 **Autoload order**: ResourceManager → SaveSystem → SessionManager → UpgradeSystem
 
